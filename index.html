@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI4S 专题 · Claude 发现 ART 酶系统 · 核查与产业拆解</title>
+<style>
+  :root{--bg:#0d1117;--panel:#161b22;--panel2:#1c2128;--border:#30363d;--text:#e6edf3;
+        --muted:#8b949e;--link:#58a6ff;--accent:#3fb950;--warn:#d29922;--hot:#f85149;--chip:#21262d}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.78}
+  .wm{position:fixed;right:14px;bottom:14px;opacity:.12;font-weight:800;font-size:20px;color:#fff;
+      pointer-events:none;user-select:none;letter-spacing:2px}
+  .wrap{max-width:900px;margin:0 auto;padding:40px 22px 70px}
+  h1{font-size:26px;margin:0 0 8px;border-bottom:2px solid var(--border);padding-bottom:16px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 6px}
+  .meta{color:var(--muted);font-size:12.5px;margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .meta span{background:var(--chip);border:1px solid var(--border);border-radius:20px;padding:2px 10px}
+  .grid{display:grid;gap:16px;margin-top:26px}
+  .card{display:block;background:var(--panel);border:1px solid var(--border);border-radius:12px;
+        padding:20px 22px;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+  .card:hover{border-color:var(--link);transform:translateY(-2px)}
+  .card .t{font-size:17px;font-weight:800;color:var(--link);margin-bottom:6px}
+  .card .d{font-size:13.5px;color:var(--muted);margin:0}
+  .card.hi{border-left:4px solid var(--accent)}
+  .card.two{border-left:4px solid var(--warn)}
+  .tags{margin-top:10px}
+  .tag{display:inline-block;background:var(--chip);border:1px solid var(--border);border-radius:20px;
+       padding:1px 9px;font-size:11px;color:var(--muted);margin:3px 5px 0 0}
+  .lead{background:var(--panel2);border-left:4px solid var(--link);border-radius:0 8px 8px 0;
+        padding:14px 17px;margin:24px 0;font-size:14.5px}
+  .note{margin-top:34px;border-top:1px solid var(--border);padding-top:16px;
+        color:var(--muted);font-size:12.5px}
+  a.inl{color:var(--link)}
+
+  .qrsec{margin-top:34px;border-top:1px solid var(--border);padding-top:24px}
+  .qrsec h2{font-size:17px;margin:0 0 16px;color:var(--accent);
+            border-left:4px solid var(--accent);padding-left:10px}
+  .qrs{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+  .qr{text-align:center}
+  /* 二维码必须置于白底之上才能被相机识别（深色页面下直接放会扫不出） */
+  .qrbox{background:#fff;padding:10px;border-radius:10px;display:inline-block;line-height:0;
+         box-shadow:0 4px 16px rgba(0,0,0,.4)}
+  .qrbox svg{width:148px;height:148px;display:block}
+  .qr.big .qrbox svg{width:196px;height:196px}
+  .qrl{font-size:12.5px;color:var(--text);margin-top:9px;font-weight:700}
+  .qru{font-size:10.5px;color:var(--muted);margin-top:3px;word-break:break-all;max-width:230px}
+  .qrhint{font-size:12.5px;color:var(--muted);margin-top:16px}
+</style>
+</head>
+<body>
+<div class="wm">MR.牛</div>
+<div class="wrap">
+
+  <h1>🧬 AI4S 专题：Claude「发现 ART 酶系统」</h1>
+  <p class="sub">2026-09-23 Anthropic 公布其分子生物学实验室首个成果 —— 一份事实核查 + 一份产业链拆解</p>
+  <div class="meta">
+    <span>📅 2026-09-25</span>
+    <span>🗓️ 事件日 2026-09-23</span>
+    <span>✍️ MR.牛</span>
+    <span>🏷️ AI4S · 基因组挖掘 · 生物工具链</span>
+  </div>
+
+  <div class="lead">
+    一次<strong>真实的高通量假说生成</strong>，被两层叙事放大成「上帝手术刀」；
+    而市场给出的定价，与中文舆论的方向<strong>完全相反</strong>。
+  </div>
+
+  <div class="grid">
+    <a class="card hi" href="ai4s-art-factcheck.html">
+      <div class="t">① AI4S 事件核查：Claude「发现 ART 酶系统」</div>
+      <div class="d">
+        11 项流传说法逐条核验：<strong>4 项准确 / 5 项口径偏差 / 2 项不成立</strong>。<br>
+        🔑 三个反直觉发现：重跑 10 轮<strong>全部错过</strong>（每轮都摸到相关位点却从不读取上游 DNA）；
+        <strong>39%</strong> 的工具调用从未读到关键证据；
+        <strong>美股杀基因编辑工具股，A 股却炒「AI制药概念」</strong>，而 A 股名单与产业链真实受益环节基本不重合。<br>
+        含技术解剖与证据边界表、三层叙事放大链条、被夸大/被低估各三点、对 Agent 工作流的可迁移启示。
+      </div>
+      <div class="tags">
+        <span class="tag">事实核查</span><span class="tag">证据分级</span><span class="tag">市场反应</span><span class="tag">Agent 方法论</span>
+      </div>
+    </a>
+
+    <a class="card two" href="ai4s-bio-toolchain.html">
+      <div class="t">② AI4S：基因组挖掘 → 生物工具链 · 产业拆解</div>
+      <div class="d">
+        与「AI 制药」不是一回事 —— 本篇只拆<strong>「发现端」</strong>。<br>
+        🎯 核心判断：<strong>受益的是「AI 发现之后要做的事」（试剂 / 湿实验 / 自动化），承压的是「AI 发现之前靠什么吃饭」（工具专利）</strong>。<br>
+        📐 七环节价值链 + 市场规模速查 + 关键判据 + A 股国产化现状（含逐公司相关度排雷与口径纠偏）。
+      </div>
+      <div class="tags">
+        <span class="tag">七环节价值链</span><span class="tag">MAD7 商品化先例</span><span class="tag">国产化现状</span><span class="tag">政策纠偏</span>
+      </div>
+    </a>
+  </div>
+
+
+  <div class="qrsec">
+    <h2>📱 手机扫码分享</h2>
+    <div class="qrs">
+      <div class="qr big">
+        <div class="qrbox"><svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 35 35" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h35v35H0z"/><path stroke="#000000" d="M1 1.5h7m4 0h1m1 0h2m3 0h7m1 0h7M1 2.5h1m5 0h1m2 0h9m4 0h1m1 0h1m1 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m1 0h4m1 0h1m1 0h1m3 0h2m5 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m1 0h1m2 0h2m1 0h2m2 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m1 0h1m6 0h1m2 0h1m2 0h2m3 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m1 0h2m3 0h3m1 0h1m3 0h1m1 0h2m1 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M9 8.5h5m1 0h2m3 0h5M1 9.5h1m1 0h5m2 0h7m1 0h1m6 0h1m1 0h5M6 10.5h1m1 0h4m5 0h1m1 0h4m1 0h1m2 0h2m1 0h3M2 11.5h2m2 0h3m2 0h3m2 0h3m4 0h1m5 0h1m1 0h1M3 12.5h4m1 0h1m1 0h1m1 0h2m1 0h2m4 0h3m3 0h1m1 0h4M2 13.5h1m1 0h1m2 0h2m1 0h2m1 0h1m2 0h2m1 0h1m1 0h3m2 0h1m1 0h1m1 0h1m1 0h2M1 14.5h2m1 0h1m1 0h1m2 0h1m2 0h4m1 0h3m1 0h1m1 0h3m2 0h1m2 0h3M1 15.5h3m3 0h1m2 0h3m1 0h1m3 0h1m3 0h2m1 0h3m3 0h2M1 16.5h2m1 0h1m1 0h1m2 0h3m2 0h2m4 0h5m1 0h2m1 0h1m1 0h1M1 17.5h1m1 0h6m1 0h2m2 0h1m1 0h3m2 0h1m1 0h1m2 0h1m1 0h2m3 0h1M1 18.5h3m4 0h2m1 0h2m1 0h1m4 0h4m1 0h1m2 0h2m1 0h2m1 0h1M1 19.5h1m2 0h2m1 0h1m1 0h1m6 0h4m1 0h1m1 0h1m4 0h2m1 0h1M1 20.5h3m2 0h1m4 0h1m1 0h2m1 0h1m1 0h2m2 0h1m1 0h1m1 0h1m1 0h4m1 0h1M4 21.5h2m1 0h1m4 0h1m2 0h1m1 0h2m2 0h5m2 0h3m1 0h1M1 22.5h2m1 0h2m2 0h1m1 0h1m1 0h1m2 0h6m1 0h1m3 0h4m3 0h1M1 23.5h1m5 0h2m1 0h2m3 0h1m2 0h1m2 0h3m4 0h1m2 0h2M1 24.5h1m1 0h1m1 0h2m2 0h1m1 0h5m1 0h1m1 0h4m1 0h1m1 0h2m1 0h1m2 0h1M1 25.5h1m1 0h5m1 0h1m2 0h1m2 0h5m1 0h1m3 0h7M9 26.5h3m1 0h3m4 0h1m1 0h2m1 0h1m3 0h1m1 0h1m1 0h1M1 27.5h7m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h1m1 0h2M1 28.5h1m5 0h1m1 0h1m2 0h1m4 0h1m1 0h4m1 0h2m3 0h4M1 29.5h1m1 0h3m1 0h1m1 0h1m3 0h7m1 0h1m3 0h6m1 0h1M1 30.5h1m1 0h3m1 0h1m1 0h3m2 0h2m1 0h1m4 0h1m2 0h2m2 0h1m1 0h1m1 0h1M1 31.5h1m1 0h3m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h1m2 0h2M1 32.5h1m5 0h1m5 0h1m3 0h1m2 0h3m6 0h1m1 0h1M1 33.5h7m1 0h1m1 0h2m2 0h2m1 0h1m4 0h2m2 0h2m2 0h2"/></svg>
+</div>
+        <div class="qrl">专题首页（推荐分享）</div>
+        <div class="qru">https://cloud1-d2g1tfgon3f91a7ef-1460507202.tcloudbaseapp.com/</div>
+      </div>
+      <div class="qr ">
+        <div class="qrbox"><svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 39 39" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h39v39H0z"/><path stroke="#000000" d="M1 1.5h7m4 0h3m5 0h1m1 0h1m4 0h3m1 0h7M1 2.5h1m5 0h1m2 0h2m2 0h2m1 0h1m1 0h1m7 0h1m3 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m1 0h3m1 0h1m1 0h1m3 0h6m4 0h1m1 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m1 0h2m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m1 0h1m1 0h7m1 0h1m2 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m1 0h1m1 0h1m1 0h2m1 0h3m2 0h1m3 0h2m1 0h2m1 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M9 8.5h5m2 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2M1 9.5h1m1 0h5m3 0h4m1 0h1m1 0h10m1 0h1m1 0h5M2 10.5h3m1 0h1m3 0h1m3 0h1m1 0h3m2 0h5m1 0h1m1 0h4m3 0h1M1 11.5h2m1 0h1m1 0h3m2 0h3m1 0h1m3 0h1m3 0h1m2 0h1m4 0h1m1 0h5M3 12.5h1m2 0h1m1 0h3m3 0h2m1 0h6m1 0h1m4 0h2m1 0h1m2 0h1m1 0h1M1 13.5h3m2 0h2m1 0h2m2 0h1m1 0h1m3 0h1m5 0h4m1 0h2m1 0h1m1 0h3M1 14.5h1m1 0h1m1 0h2m3 0h1m1 0h4m1 0h1m2 0h1m1 0h3m7 0h1m4 0h1M3 15.5h2m2 0h1m2 0h1m2 0h2m3 0h2m3 0h1m2 0h9m1 0h1M9 16.5h2m2 0h2m3 0h5m1 0h1m3 0h1m3 0h2M4 17.5h1m2 0h2m1 0h1m1 0h1m2 0h2m1 0h1m4 0h2m3 0h2m1 0h3m1 0h3M3 18.5h3m6 0h1m1 0h3m2 0h1m5 0h1m1 0h1m2 0h2m4 0h1M1 19.5h1m1 0h3m1 0h3m1 0h1m2 0h3m1 0h3m1 0h1m2 0h4m1 0h1m1 0h2m1 0h3M1 20.5h2m9 0h2m2 0h1m2 0h6m2 0h1m1 0h1m1 0h2m4 0h1M1 21.5h4m1 0h4m3 0h4m2 0h1m5 0h2m1 0h4m1 0h1M3 22.5h2m3 0h2m2 0h1m2 0h1m3 0h6m2 0h1m6 0h1m1 0h1M3 23.5h3m1 0h2m3 0h2m4 0h1m2 0h1m1 0h1m2 0h3m1 0h5m2 0h1M1 24.5h1m1 0h1m2 0h1m1 0h3m3 0h1m3 0h2m1 0h2m1 0h1m1 0h1m1 0h3m1 0h2M1 25.5h1m3 0h3m1 0h1m1 0h1m2 0h3m2 0h1m1 0h2m5 0h1m2 0h2m2 0h3M1 26.5h2m2 0h2m5 0h1m2 0h6m1 0h2m3 0h1m1 0h1m1 0h1M1 27.5h1m2 0h4m1 0h4m2 0h1m6 0h1m1 0h2m4 0h1m2 0h5M1 28.5h1m1 0h1m7 0h4m2 0h9m1 0h1m2 0h1m1 0h1m3 0h2M1 29.5h1m1 0h1m3 0h2m1 0h4m2 0h1m1 0h2m3 0h1m1 0h10m2 0h1M9 30.5h1m2 0h6m1 0h4m1 0h1m2 0h3m3 0h2m2 0h1M1 31.5h7m2 0h4m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h1m1 0h1m1 0h3M1 32.5h1m5 0h1m1 0h2m4 0h1m4 0h3m1 0h1m2 0h1m1 0h1m3 0h2m1 0h1M1 33.5h1m1 0h3m1 0h1m1 0h4m1 0h4m9 0h7m1 0h3M1 34.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h4m1 0h5m4 0h2m1 0h1M1 35.5h1m1 0h3m1 0h1m1 0h2m1 0h4m5 0h2m4 0h1m2 0h1m3 0h2m1 0h1M1 36.5h1m5 0h1m3 0h5m1 0h1m2 0h5m3 0h1m1 0h2m1 0h2m2 0h1M1 37.5h7m1 0h4m1 0h3m2 0h1m1 0h1m3 0h4m1 0h1m2 0h5"/></svg>
+</div>
+        <div class="qrl">A · 事件核查</div>
+      </div>
+      <div class="qr ">
+        <div class="qrbox"><svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 39 39" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h39v39H0z"/><path stroke="#000000" d="M1 1.5h7m5 0h2m1 0h2m4 0h3m2 0h3m1 0h7M1 2.5h1m5 0h1m2 0h8m1 0h2m3 0h2m1 0h1m3 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m1 0h3m1 0h1m1 0h2m2 0h6m4 0h1m1 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m1 0h2m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m1 0h9m1 0h1m2 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m1 0h2m2 0h6m2 0h1m3 0h2m1 0h2m1 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M9 8.5h5m1 0h2m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2M1 9.5h1m1 0h5m3 0h6m1 0h1m1 0h5m1 0h2m1 0h1m1 0h5M2 10.5h1m1 0h1m1 0h1m1 0h5m1 0h1m1 0h4m2 0h2m1 0h1m1 0h1m1 0h4m3 0h1M1 11.5h2m1 0h1m1 0h4m1 0h2m2 0h1m3 0h1m3 0h4m4 0h1m1 0h5M3 12.5h1m2 0h1m3 0h1m1 0h4m1 0h6m1 0h1m4 0h2m1 0h1m2 0h1m1 0h1M1 13.5h2m3 0h5m1 0h2m1 0h1m3 0h1m5 0h4m1 0h2m1 0h1m1 0h3M3 14.5h1m1 0h2m5 0h2m1 0h1m1 0h1m2 0h1m1 0h3m7 0h1m4 0h1M2 15.5h3m1 0h2m2 0h1m2 0h1m4 0h2m3 0h1m2 0h9m1 0h1M1 16.5h2m2 0h2m2 0h1m3 0h2m3 0h7m3 0h1m3 0h2M7 17.5h2m1 0h1m1 0h5m1 0h1m3 0h4m2 0h2m1 0h3m1 0h3M2 18.5h5m1 0h1m4 0h2m1 0h1m2 0h1m4 0h2m1 0h1m2 0h2m4 0h1M1 19.5h1m2 0h2m1 0h1m3 0h1m1 0h4m1 0h3m1 0h1m2 0h4m1 0h1m1 0h2m1 0h3M1 20.5h3m8 0h2m2 0h1m2 0h6m2 0h1m1 0h1m1 0h2m4 0h1M1 21.5h2m1 0h1m1 0h4m2 0h5m2 0h1m5 0h2m1 0h4m1 0h1M1 22.5h1m1 0h2m3 0h2m2 0h1m1 0h2m3 0h6m2 0h1m6 0h1m1 0h1M1 23.5h1m1 0h2m1 0h3m2 0h3m4 0h1m2 0h1m1 0h1m2 0h3m1 0h5m2 0h1M1 24.5h1m1 0h1m4 0h3m7 0h2m1 0h1m2 0h1m1 0h1m1 0h3m1 0h2M1 25.5h2m2 0h3m2 0h1m2 0h4m2 0h1m1 0h1m1 0h1m4 0h1m2 0h2m2 0h3M1 26.5h2m1 0h2m2 0h2m1 0h3m1 0h6m1 0h2m3 0h1m1 0h1m1 0h1M1 27.5h1m1 0h5m1 0h3m1 0h1m1 0h1m6 0h1m1 0h2m4 0h1m2 0h5M1 28.5h1m1 0h1m4 0h1m2 0h1m2 0h1m2 0h9m1 0h1m2 0h1m1 0h1m3 0h2M1 29.5h1m5 0h1m2 0h2m1 0h1m2 0h1m1 0h2m3 0h1m1 0h10m2 0h1M9 30.5h1m2 0h2m1 0h3m1 0h4m1 0h1m2 0h3m3 0h2m2 0h1M1 31.5h7m3 0h3m2 0h1m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h1m1 0h1m1 0h3M1 32.5h1m5 0h1m1 0h3m3 0h1m4 0h2m2 0h1m2 0h1m1 0h1m3 0h2m1 0h1M1 33.5h1m1 0h3m1 0h1m1 0h1m2 0h2m1 0h3m5 0h1m3 0h7m1 0h3M1 34.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m1 0h4m1 0h5m4 0h2m1 0h1M1 35.5h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h2m4 0h1m1 0h1m4 0h1m2 0h1m3 0h2m1 0h1M1 36.5h1m5 0h1m3 0h1m1 0h3m1 0h1m2 0h5m3 0h1m1 0h2m1 0h2m2 0h1M1 37.5h7m1 0h3m2 0h3m2 0h1m1 0h1m3 0h4m1 0h1m2 0h5"/></svg>
+</div>
+        <div class="qrl">B · 产业拆解</div>
+      </div>
+    </div>
+    <p class="qrhint">扫码即可在手机浏览器直接打开，<strong>无需登录、无需安装</strong>。链接公开可访问，任何人凭链接即可查看。</p>
+  </div>
+
+  <div class="note">
+    ⚠️ 本专题为公开信息核查与产业研究，<strong>不构成投资建议</strong>，不含买卖建议、评级或目标价。<br>
+    所有数据标注证据等级（✅已核实 / ✅双源一致 / ⚠️单源 / ❓未找到 / ❌已证伪），
+    未取得原文的一律降级标注，未编造任何数字或公司业务。<br>
+    引用来源以各家官网、交易所披露、权威媒体为主，详见各报告末尾来源表。
+  </div>
+
+</div>
+</body>
+</html>
