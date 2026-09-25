@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI4S 基因组挖掘 → 生物工具链 · 产业拆解 · 2026-09-25 · MR.牛</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2128; --border:#30363d;
+    --text:#e6edf3; --muted:#8b949e; --link:#58a6ff; --accent:#3fb950;
+    --warn:#d29922; --hot:#f85149; --code:#c9d1d9; --chip:#21262d;
+    --purple:#a371f7; --blue:#388bfd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:0;background:var(--bg);color:var(--text);
+       font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.78}
+  .wm{position:fixed;right:14px;bottom:14px;opacity:.12;font-weight:800;font-size:20px;color:#fff;
+      pointer-events:none;user-select:none;letter-spacing:2px;z-index:9}
+  .wrap{max-width:1060px;margin:0 auto;padding:28px 22px 60px}
+  header{border-bottom:2px solid var(--border);padding-bottom:16px;margin-bottom:8px}
+  h1{font-size:25px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px;margin:0}
+  .meta{color:var(--muted);font-size:12.5px;margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}
+  .meta span{background:var(--chip);border:1px solid var(--border);border-radius:20px;padding:2px 10px}
+  .banner{margin-top:14px;background:rgba(56,139,253,.08);border:1px solid rgba(56,139,253,.4);
+          border-radius:8px;padding:12px 15px;font-size:12.5px;color:var(--muted)}
+  .banner b{color:var(--link)}
+  .banner.warn{background:rgba(210,153,34,.08);border-color:rgba(210,153,34,.45);margin-top:10px}
+  .banner.warn b{color:var(--warn)}
+  h2{font-size:18px;color:var(--accent);border-left:4px solid var(--accent);
+     padding-left:10px;margin:34px 0 12px}
+  h3{font-size:15.5px;margin:24px 0 8px;padding-bottom:5px;border-bottom:1px dashed var(--border)}
+  h4{font-size:14px;margin:16px 0 6px;color:var(--link)}
+  p{margin:8px 0}
+  a{color:var(--link);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;
+        padding:16px 18px;margin:14px 0}
+  .card.hi{border-left:4px solid var(--accent)}
+  .card.warn{border-left:4px solid var(--warn)}
+  .card.risk{border-left:4px solid var(--hot)}
+  .card.purple{border-left:4px solid var(--purple)}
+  .quote{background:var(--panel2);border-left:4px solid var(--link);border-radius:0 8px 8px 0;
+         padding:12px 16px;margin:14px 0;font-size:15px}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+  th{background:#21262d;text-align:left;padding:8px 10px;border:1px solid var(--border);
+     font-weight:700;font-size:12.5px}
+  td{padding:7px 10px;border:1px solid var(--border);vertical-align:top}
+  tr:nth-child(even) td{background:rgba(255,255,255,.017)}
+  .num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--link)}
+  .ok{color:var(--accent);font-weight:700}
+  .bad{color:var(--hot);font-weight:700}
+  .mid{color:var(--warn);font-weight:700}
+  ul,ol{margin:8px 0;padding-left:22px}
+  li{margin:5px 0}
+  code{background:var(--chip);padding:1px 6px;border-radius:4px;color:var(--code);font-size:12.5px}
+  .grid{display:grid;gap:12px}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+  .kpi{background:var(--panel2);border:1px solid var(--border);border-radius:9px;
+       padding:12px 13px;text-align:center}
+  .kpi .v{font-size:19px;font-weight:800;color:var(--link);font-variant-numeric:tabular-nums;line-height:1.25}
+  .kpi .l{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .kpi .d{font-size:11px;color:var(--accent);margin-top:2px;font-weight:600}
+  .kpi.red .v{color:var(--hot)} .kpi.red .d{color:var(--hot)}
+  .kpi.amber .v{color:var(--warn)} .kpi.amber .d{color:var(--warn)}
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0}
+  .flow .st{background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+            padding:9px 13px;font-size:12.5px;font-weight:600}
+  .flow .st.on{border-color:var(--accent);color:var(--accent)}
+  .flow .st.no{border-color:var(--hot);color:var(--hot)}
+  .flow .st.mid{border-color:var(--warn);color:var(--warn)}
+  .flow .ar{color:var(--muted);font-weight:700}
+  .v{display:inline-block;border-radius:4px;padding:1px 7px;font-size:11px;
+     font-weight:700;white-space:nowrap}
+  .v-true{background:rgba(63,185,80,.15);border:1px solid rgba(63,185,80,.5);color:var(--accent)}
+  .v-part{background:rgba(210,153,34,.15);border:1px solid rgba(210,153,34,.5);color:var(--warn)}
+  .v-false{background:rgba(248,81,73,.15);border:1px solid rgba(248,81,73,.55);color:var(--hot)}
+  .v-unk{background:var(--chip);border:1px solid var(--border);color:var(--muted)}
+  .src{font-size:11.5px;color:var(--muted)}
+  .src a{font-size:11.5px}
+  .tag{display:inline-block;background:var(--chip);border:1px solid var(--border);
+       border-radius:20px;padding:1px 9px;font-size:11px;color:var(--muted);margin-left:6px}
+  footer{margin-top:26px;border-top:1px solid var(--border);padding-top:16px;
+         color:var(--muted);font-size:12.5px}
+  .todo{background:rgba(210,153,34,.1);border:1px dashed var(--warn);border-radius:8px;
+        padding:14px 16px;margin:14px 0;color:var(--warn);font-size:13px}
+  @media(max-width:700px){ h1{font-size:20px} table{font-size:12px} }
+</style>
+</head>
+<body>
+<div class="wm">MR.牛</div>
+<div class="wrap">
+
+<header>
+  <h1>🧬 AI4S：基因组挖掘 → 生物工具链 · 产业拆解</h1>
+  <p class="sub">从「AI 假说生成的边际成本趋近于零」，到「湿实验成为瓶颈」——七环节价值链、关键判据与国产化现状</p>
+  <div class="meta">
+    <span>📅 2026-09-25</span>
+    <span>🗓️ 事件锚点 2026-09-23</span>
+    <span>✍️ MR.牛</span>
+    <span>🏷️ AI4S · 工具酶 · 实验室自动化</span>
+    <span style="border-color:#d29922;color:#d29922">🔒 内部版 · 含 A 股方向</span>
+  </div>
+  <div class="banner">
+    <b>📌 本报告定位</b>：这是<a href="ai4s-art-factcheck.html">《AI4S 事件核查》</a>的<b>产业配套篇</b>，
+    聚焦<b>「发现端」</b>——AI 如何产出生物工具、这些工具如何变成产品、以及验证它们的产能卡在哪里。
+  </div>
+  <div class="banner warn">
+    <b>⚠️ 与既有《AI 制药深度研究-2026-09-20》的分工（避免重复）</b><br>
+    旧报告覆盖的是<b>「管线端」</b>：政策三级跳 / AIDD 三阶段 / 巨头布局 / 英矽智能 III 期 / 干实验 vs 湿实验 / CXO。
+    <b>本篇不重复以上内容</b>，只做一件事：把<b>「AI 发现生物工具 → 工具商品化」</b>这条与药物管线<b>平行的链条</b>拆开。
+    两条链的交集只有一处——<b>湿实验产能</b>，且本篇从<b>「验证通量」</b>而非「CXO 订单」的角度切入。
+  </div>
+  <div class="banner">
+    <b>🔍 数据核验规则</b>：<span class="v v-true">✅ 已核实</span>（官方一手或 ≥2 独立来源一致）·
+    <span class="v v-part">⚠️ 单源</span>（多为商业研究机构转售页摘要）·
+    <span class="v v-unk">❓ 未找到</span>（一律不编造，如实列在 §9 盲区）。
+    <b>机构市场规模数字口径互不兼容，不可相加或交叉引用</b>——这是本篇最需要提醒的一点。
+  </div>
+</header>
+
+<!-- ============ §0 核心结论 ============ -->
+<div class="card hi">
+  <h2 style="margin-top:6px">🎯 核心结论</h2>
+  <div class="quote">
+    <strong>「AI 发现新酶」这件事的产业含义，不是「基因编辑迎来利好」，而是「工具层的稀缺性在贬值、验证层的稀缺性在升值」。</strong>
+  </div>
+  <div class="grid g4" style="margin-top:14px">
+    <div class="kpi"><div class="v">≈59 万亿 bp</div><div class="l">GenBank + WGS 碱基总数</div><div class="d">2026-08 · 原料近乎免费</div></div>
+    <div class="kpi"><div class="v">$13.7B→$24.3B</div><div class="l">分子生物学酶/试剂市场</div><div class="d">2025→2031 · CAGR 10.0%</div></div>
+    <div class="kpi amber"><div class="v">$193M</div><div class="l">限制性内切酶市场（2025）</div><div class="d">vs CRISPR 试剂 $4.01B</div></div>
+    <div class="kpi red"><div class="v">$115.8M</div><div class="l">Casgevy FY2025 收入</div><div class="d">下游变现仍象征性</div></div>
+  </div>
+  <h3 style="margin-top:20px">三个关键判断</h3>
+  <ol>
+    <li><b>价值不在「发现」，在「验证」与「规模化生产」。</b>
+        数据原料近乎免费（59 万亿 bp 公开碱基）、发现的计算成本已降到可忽略量级——
+        真正稀缺的是<b>功能解析</b>与<b>GMP 级生产能力</b>。可核查的先例（MAD7 → Eureca-V）证明：
+        新酶商业化的瓶颈从来不是「找到」，而是<b>「证明它能用」＋「找得到人放大生产」</b>。</li>
+    <li><b>产业链上有两个完全相反的方向，不能混为一谈。</b>
+        <span class="bad">承压方</span>：现有<b>工具专利持有者</b>——若 AI 能持续廉价产出新候选工具，专利稀缺性长期贬值。
+        <span class="ok">受益方</span>：<b>科研试剂/工具酶供应商、湿实验产能、实验室自动化</b>——验证需求上升。
+        <b>把「AI 发现新酶」默认读成整个基因编辑板块利好，是方向性误判。</b></li>
+    <li><b>self-driving lab 的现实远低于叙事，别急着下注。</b>
+        按第三方口径，<b>脚本化（scripted）自动化仍占实验室自动化的最大份额</b>，闭环自主只是增量；
+        标杆案例（A-Lab / Polybot / Emerald）的产出数字本轮<b>一个也没能拿到官方一手页面</b>，
+        且 A-Lab 还存在批评性分析。<b>这条链的兑现节奏会比叙事慢得多。</b></li>
+    <li><b>🔴 而 A 股的核心问题是「真公司大多没上市」。</b>
+        <b>「AI × 酶」在中国已有 4 条可核查的落地证据</b>（最硬的一条：<b>翌圣生物在售 OpenCRISPR-1，官网标注为「AI 设计高保真 Cas9 类似物」</b>）——
+        但载体是<b>酶供应商</b>而非 AI 公司；而工具酶赛道<b>最纯正的三家（翌圣、全式金、菲鹏）IPO 全部折戟</b>，
+        实验室自动化的两家（镁伽、汇像）不在 A 股，AI 设计端最实的几家全在一级市场。<br>
+        <b>👉 这解释了 9/24 A 股为何买「沾边」：不是不看好纯正标的，而是买不到。</b>
+        详见 <a href="#s6">§6</a>。</li>
+  </ol>
+</div>
+
+<!-- ============ §1 增量定位 ============ -->
+<h2 id="s1">一、增量定位：这条链和「AI 制药」不是一回事</h2>
+<p>市场习惯把所有相关新闻塞进「AI 制药」这一个标签，但底层其实是两条<b>产出物不同</b>的链条：</p>
+<table>
+<thead><tr><th style="width:16%">维度</th><th style="width:42%">管线端（旧报告覆盖）</th><th>发现端（本篇）</th></tr></thead>
+<tbody>
+<tr><td><b>产出物</b></td><td>一个<b>药物分子 / 一条管线</b></td><td>一个<b>生物工具 / 一套酶系统</b>（酶、编辑系统、调控元件）</td></tr>
+<tr><td><b>AI 的角色</b></td><td>设计分子、预测性质、优化成药性</td><td>在<b>海量未知序列</b>里发现自然界已存在的系统</td></tr>
+<tr><td><b>成功判据</b></td><td>临床终点、获批、销售</td><td><b>功能被解析 + 可放大生产 + 被授权使用</b></td></tr>
+<tr><td><b>变现方式</b></td><td>药品销售、CXO 订单</td><td><b>专利/许可授权、试剂目录销售</b></td></tr>
+<tr><td><b>时间尺度</b></td><td>10 年级（临床为主）</td><td>工具类可<b>数年</b>进目录；但功能未知时无法估价</td></tr>
+<tr><td><b>可复用的程度</b></td><td>低（一个分子治一个适应症）</td><td class="ok"><b>高</b>（一个工具可被成千实验室反复使用）</td></tr>
+<tr><td><b>最大瓶颈</b></td><td>临床成功率</td><td class="bad"><b>功能解析 + 验证通量</b></td></tr>
+</tbody>
+</table>
+<div class="card purple">
+  <b>💡 为什么这个区分重要</b>：工具型资产的<b>价值分布极度头部化</b>。
+  限制性内切酶整个市场 2025 年只有 <b>$193.4M</b>，而 CRISPR 试剂市场 2024 年就有 <b>$4.01B</b>——
+  <b>跨两个数量级</b>。也就是说，「发现了一个新酶」这句话本身<b>几乎不含估值信息</b>；
+  只有走到「它能干什么 + 谁能生产」才有价格。<br>
+  <b>ART 目前的位置：距离「能干什么」都还没到。</b>
+</div>
+
+<!-- ============ §2 二阶逻辑 ============ -->
+<h2 id="s2">二、二阶逻辑推导：瓶颈在哪里发生转移</h2>
+<div class="flow">
+  <div class="st on">数据原料近乎免费</div><div class="ar">→</div>
+  <div class="st on">假说生成成本趋零</div><div class="ar">→</div>
+  <div class="st mid">假说洪水（稳定性存疑）</div><div class="ar">→</div>
+  <div class="st no">湿实验验证成为瓶颈</div><div class="ar">→</div>
+  <div class="st on">验证通量 / 试剂 / 自动化受益</div>
+</div>
+
+<h3>2.1 第一环：原料侧——公开数据量级已远超单次挖掘所需</h3>
+<div class="grid g4">
+  <div class="kpi"><div class="v">267M</div><div class="l">GenBank 序列数（非WGS）</div><div class="d">2026-08 Rel.273</div></div>
+  <div class="kpi"><div class="v">8.24 万亿</div><div class="l">GenBank 碱基数</div><div class="d">约每 18 个月翻倍</div></div>
+  <div class="kpi"><div class="v">50.8 万亿</div><div class="l">WGS 碱基数</div><div class="d">全基因组 shotgun</div></div>
+  <div class="kpi"><div class="v">30T bp</div><div class="l">JGI IMG 数据集</div><div class="d">830 亿基因 · 24 万数据集</div></div>
+</div>
+<p><b>GenBank + WGS 合计约 59 万亿碱基</b>（✅ 已核实，NCBI 官方统计页）。
+JGI IMG 另有 30 万亿 bp / 830 亿基因（✅ DOE 官方）。
+此外 IMG/VR 病毒序列 ≥200 万条、IMG/PR 质粒 80 万条、MGnify 宏基因组组装 56,782 个（✅ 直接调 EMBL-EBI 官方 API 取得）。</p>
+<div class="card">
+  <b>👉 含义</b>：ART 那次挖掘只处理了约 <b>20 万个逆转录酶</b>，相对于 59 万亿 bp 的存量，
+  相当于从太平洋里舀了一瓢。<b>「原料」从来不是瓶颈，也几乎不构成成本</b>——
+  这是判断这条链价值分布的第一个支点。
+</div>
+
+<h3>2.2 第二环：生成侧——成本已降到可忽略，但「可靠性」没有</h3>
+<div class="card warn">
+  <b>⚠️ 本报告刻意不做「token × 单价 = 发现成本」的推算。</b><br>
+  理由与配套报告一致：那个算法会把<b>准备、外部算力、科研人力、湿实验成本</b>全部隐去，
+  制造出报告本身没有的精度。Anthropic <b>没有公布任何 all-in 成本</b>，
+  技术报告的 token 口径（215.6M，不含 cache reads）也明确只是推理用量。<br>
+  <b>可以确定的是定性判断</b>：推理侧的现金支出相对于一次湿实验、一个科研人力月，
+  已经降到<b>不构成决策约束</b>的量级。这就是「假说生成边际成本趋零」的确切含义。
+</div>
+<div class="card risk">
+  <b>🔴 但生成侧有一个被忽略的硬伤：可复现性。</b><br>
+  配套报告的核心发现——<b>同样流程重跑 10 轮，每一轮都摸到了相关位点，却没有一轮去读该读的那段 DNA</b>，
+  全部错过关键阵列。而唯一的成功来自一次<b>越出既定筛选指标</b>的追查。<br>
+  <b>👉 含义</b>：所谓「假说洪水」目前是<b>间歇性的，不是稳定的产能</b>。
+  任何建立在「AI 会持续稳定产出可验证线索」之上的产业推断，<b>都还缺一个关键的可靠性前提</b>。
+  （该问题的工程解法见 <code>agent-research-workflow.md</code> 的 T3 评测轨。）
+</div>
+
+<h3>2.3 第三环：验证侧——瓶颈在这里，而且 <em>更</em> 紧了</h3>
+<p>漏斗前段免费化，只会让后段排队更长。三个佐证：</p>
+<table>
+<thead><tr><th style="width:26%">证据</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td><b>① Anthropic 必须自建实验室</b></td>
+    <td>官网明确：湾区自建分子生物学实验室（仅 BSL-1/BSL-2，不处理可感染人类病原体），
+        <b>所有湿实验由人类科学家完成</b>。若不自建实验能力，AI 产出的假说就<b>无处兑现</b>——
+        这是「验证是瓶颈」最直接的商业证据。</td></tr>
+<tr><td><b>② 论文作者的自我承认</b></td>
+    <td>ART 的全部实验证据只有两条：一条<b>来自对已有数据（SA1 噬菌体感染）的重新分析</b>，
+        一条是<b>在大肠杆菌中表达、观察到短 RNA</b>。
+        <b>连「这个酶干什么」都还没有实验结论</b>——验证成本之高，可见一斑。</td></tr>
+<tr><td><b>③ self-driving lab 尚未接班</b></td>
+    <td>按第三方口径，<b>脚本化自动化仍占实验室自动化的最大份额</b>，
+        闭环/自主实验室是<b>增量而非存量</b>。也就是说：<b>验证侧的自动化替代还没发生</b>，
+        瓶颈暂时只能靠人力与仪器通量硬扛。</td></tr>
+</tbody>
+</table>
+
+<!-- ============ §3 七环节 ============ -->
+<h2 id="s3">三、七环节价值链拆解</h2>
+<p class="src">每环节给出：定位 / 可核实规模 / 主要玩家 / 2026 关键事件 / <b>与 ART 事件的距离</b>。
+所有 ⚠️ 项为单一来源（多为商业研究机构转售页摘要），口径互不兼容。</p>
+
+<h3>3.1 环节一：生物序列数据库与基因组数据</h3>
+<table>
+<thead><tr><th style="width:24%">条目</th><th style="width:30%">数值</th><th style="width:22%">来源</th><th>核实</th></tr></thead>
+<tbody>
+<tr><td>GenBank 序列数 / 碱基数</td><td>267,383,895 条 / 8.24 万亿 bp</td><td>NCBI（2026-08 Rel.273）</td><td><span class="v v-true">✅</span></td></tr>
+<tr><td>WGS 序列数 / 碱基数</td><td>5,132,699,813 条 / 50.83 万亿 bp</td><td>NCBI</td><td><span class="v v-true">✅</span></td></tr>
+<tr><td>JGI IMG</td><td>24 万+ 数据集 / 30T bp / 830 亿基因；2.7 万用户 / 110+ 国家</td><td>JGI-LBNL（DOE）</td><td><span class="v v-true">✅</span></td></tr>
+<tr><td>IMG/VR 病毒序列</td><td>≥200 万条（v4）</td><td>JGI</td><td><span class="v v-true">✅</span></td></tr>
+<tr><td>MGnify 宏基因组组装（MAG）</td><td>56,782 个（直接调官方 API 取得）</td><td>EMBL-EBI</td><td><span class="v v-true">✅</span></td></tr>
+<tr><td>EMP 地球微生物组计划</td><td><b>已停止接收新样本</b>（达处理上限）</td><td>EMP (UCSD)</td><td><span class="v v-true">✅</span></td></tr>
+<tr><td>UniProt 条目总数</td><td class="mid">未取得（官网 JS 渲染 / 统计页加载失败）</td><td>—</td><td><span class="v v-unk">❓</span></td></tr>
+</tbody>
+</table>
+<p><b>与 ART 的距离：0 跳。</b>这就是 ART 被找到的那个池子。本环节特征：<b>公共品属性强、几乎无商业变现空间</b>，
+价值主要体现在「谁能高效检索」而非「谁拥有数据」。</p>
+
+<h3>3.2 环节二：AI 生物基础模型 / 基因语言模型</h3>
+<table>
+<thead><tr><th style="width:24%">主体 / 条目</th><th style="width:40%">关键事实</th><th>核实</th></tr></thead>
+<tbody>
+<tr><td><b>Evo 2</b>（Arc Institute）</td>
+    <td>训练 <b>9.3 万亿 token / 128,000+ 基因组</b>；7B + 40B 两档；上下文 <b>1,048,576 token</b>；
+        2,048× H100；<b>可设计基因组尺度序列，并已设计出功能性 CRISPR-Cas 系统且经实验验证</b>；
+        BRCA1 良性/致病变异零样本预测 &gt;90%。论文见 Nature（2026）</td><td><span class="v v-true">✅</span></td></tr>
+<tr><td><b>Evo 2 的落地路径</b> 🔥</td>
+    <td>已封装为 <b>NVIDIA BioNeMo NIM 微服务</b>（API + 微调）——
+        <b>生物基础模型的商业化走的是「开源权重 → 云服务包装」，不是自建 SaaS</b></td><td><span class="v v-true">✅</span></td></tr>
+<tr><td><b>Genos</b>（华大 + 之江实验室）</td>
+    <td><b>100 亿参数</b>（另有 12 亿版）；百万碱基对上下文；单碱基分辨率；
+        基于 <b>636 个 T2T 级</b>人类基因组（HPRC/HGSVC）；<b>已开源</b>（HuggingFace + 魔搭）</td><td><span class="v v-true">✅</span></td></tr>
+<tr><td>Isomorphic Labs</td>
+    <td>2025-03 首轮 <b>$600M</b>（Thrive 领投）；2026 第二轮 <b>$2.1B</b>；
+        首个 AI 设计药临床<b>推迟至 2026 年底</b></td><td><span class="v v-part">⚠️ 官网未取到第二轮</span></td></tr>
+<tr><td>AlphaFold 3 / AlphaFold DB 规模</td><td class="mid">未取得官方数字（Nature 页面 SSO 重定向）</td><td><span class="v v-unk">❓</span></td></tr>
+</tbody>
+</table>
+<p><b>与 ART 的距离：1 跳（方法层）。</b>ART 用的是<b>通用 agent + 检索/推理</b>，不是专门的基因组语言模型。
+值得注意的是：另有研究显示<b>斯坦福团队用基因组语言模型研究了另一套逆转录酶系统</b>——
+即「专用模型 vs 通用 agent」两条路线在这一领域<b>正在并行竞争</b>，尚无定论。</p>
+
+<h3>3.3 环节三：工具酶与分子生物学试剂 <span class="tag">本篇最关键</span></h3>
+<h4>市场总量</h4>
+<table>
+<thead><tr><th style="width:32%">细分</th><th style="width:38%">规模</th><th>核实</th></tr></thead>
+<tbody>
+<tr><td>分子生物学酶 / 试剂盒 / 试剂</td>
+    <td><b>$13.68B（2025）→ $15.05B（2026）→ $24.26B（2031）</b>，CAGR <b>10.02%</b><br>
+        结构：kits&reagents 占 65.1%；<b>酶类 CAGR 12.05%</b>；PCR 占 45.1%；NGS CAGR 15.95%；北美 38.4%</td>
+    <td><span class="v v-part">⚠️ Mordor</span></td></tr>
+<tr><td><b>限制性内切酶</b></td>
+    <td><b>$193.4M（2025）→ $209.34M（2026）→ $407.15M（2034）</b>；北美占 46.87%</td>
+    <td><span class="v v-part">⚠️ FBI</span></td></tr>
+<tr><td>主流厂商</td>
+    <td>Thermo Fisher、Roche、Merck、QIAGEN、Takara、<b>NEB</b>、Promega、Agilent、Illumina、Danaher</td>
+    <td><span class="v v-part">⚠️</span></td></tr>
+<tr><td><b>分厂商市占率</b>（NEB/Thermo/Takara 各占多少）</td>
+    <td class="mid"><b>未找到</b>——付费报告只列名不列份额</td><td><span class="v v-unk">❓</span></td></tr>
+<tr><td>逆转录酶 / DNA 聚合酶 单独市场规模</td><td class="mid">未取得具体数值</td><td><span class="v v-unk">❓</span></td></tr>
+</tbody>
+</table>
+
+<h4>🔥「新酶发现 → 商品化」的可核查先例：MAD7</h4>
+<div class="card hi">
+  <p><b>这是整篇报告最有价值的一段——因为它证明这条路<em>真的能走通</em>，同时也暴露了它<em>需要什么</em>。</b></p>
+  <table style="margin:10px 0">
+  <thead><tr><th style="width:22%">环节</th><th style="width:30%">主体</th><th>事实</th></tr></thead>
+  <tbody>
+  <tr><td><b>发现 / 开发</b></td><td>Inscripta</td><td>MAD7——一种非天然存在的 Cas12a 变体（TTTN PAM），<b>通过计算/理性设计获得</b>而非从自然界直接筛出</td></tr>
+  <tr><td><b>规模化生产</b></td><td>Aldevron（Danaher）</td><td>基于 MAD7 推出 GMP 级 <b>Eureca-V</b> 核酸酶，由 Inscripta 授权；Class2 TypeV，偏好 YTTV PAM，5′ overhang；提供 0.25/1/5mg 及 cGMP 定制</td></tr>
+  <tr><td><b>资产重组</b></td><td>Inscripta + Manus</td><td><b>2025-04 合并</b>——新酶资产的所有权重组在这条链上是常态风险</td></tr>
+  <tr><td><b>许可模式</b> 🔥</td><td>Manus</td><td><b>2025-11-24 启动 MAD7 独立授权计划</b>：定制弹性许可、<b>主打「避开高额许可费」</b></td></tr>
+  </tbody>
+  </table>
+  <p><b>👉 三条推论：</b></p>
+  <ol>
+    <li><b>发现不是瓶颈，功能解析与放大生产才是。</b>MAD7 从设计到 GMP 级商品化，靠的是 Aldevron 这类 CDMO 的产能。</li>
+    <li><b>许可费是这条链的核心商业模式，也是它最脆弱的地方。</b>Manus 的卖点居然是「比 Cas9 便宜」——
+        说明<b>工具层的护城河本质上是专利，而专利可以被新工具绕开</b>。这正好解释了美股工具股为何在 ART 消息当天下跌。</li>
+    <li><b>ART 与 MAD7 不可比。</b>MAD7 是<b>已知功能的理性设计产物</b>；ART 是<b>功能完全未知的自然发现</b>。
+        ART 要走上同一条路，先得补上「功能解析」这一步，而这一步<b>没有任何捷径</b>。</li>
+  </ol>
+</div>
+
+<h4>专利底层：不确定性并未终结</h4>
+<div class="card warn">
+  <b>2026-03-26，USPTO 第三次维持 PTAB 原判</b>，认定 <b>Broad / MIT / Harvard</b> 为真核（含人）细胞
+  CRISPR/Cas9 首创方；CVC 保留上诉权。Editas 为 Broad <b>Cas12a</b> 专利族及 Broad/Harvard <b>Cas9</b> 专利族的
+  <b>人用药独家被许可方</b>。<br>
+  <b>👉 含义</b>：编辑工具的底层专利格局<b>至今仍在拉锯</b>。这种不确定性本身就是「工具层护城河不可靠」的佐证。
+</div>
+<p><b>与 ART 的距离：1 跳。</b>ART 若功能被证实，最先落入的就是本环节（试剂目录 / 授权）。</p>
+
+<h3>3.4 环节四：DNA 合成与基因合成</h3>
+<table>
+<thead><tr><th style="width:24%">条目</th><th style="width:38%">数值</th><th>核实</th></tr></thead>
+<tbody>
+<tr><td><b>Twist Bioscience FY2025</b></td>
+    <td>总收入 <b>$376.6M</b>（+20%，创纪录）；Q4 $99.0M（+17%）；毛利率 FY25 <b>50.7%</b>（+8.1pt）；<br>
+        分部：NGS <b>$208.1M</b>(+23%) / SynBio <b>$145.0M</b>(+17%) / Biopharma $23.5M(+15%)；<br>
+        净亏 $77.7M；现金 $232.4M；<b>出货约 938,000 个基因</b>；客户约 3,800 家；FY26 指引 $425–435M</td>
+    <td><span class="v v-true">✅ 官方财报</span></td></tr>
+<tr><td>DNA 合成市场</td><td>2033 年 <b>$13.85B</b>，CAGR <b>16.89%</b>（基准年绝对值未给）</td><td><span class="v v-part">⚠️ GVR</span></td></tr>
+<tr><td><b>每碱基合成成本曲线（$/bp）</b></td><td class="mid"><b>未找到</b>——命中全为 PDF；上交所披露文件仅定性描述；Twist 官网为电商动态报价</td><td><span class="v v-unk">❓</span></td></tr>
+<tr><td>GenScript 2025 收入</td><td class="mid">未取得（仅港交所年报 PDF，无法抓取）</td><td><span class="v v-unk">❓</span></td></tr>
+</tbody>
+</table>
+<div class="card purple">
+  <b>🔍 一个反直觉的结构性事实</b>：<b>Twist 的 NGS 收入（$208.1M）已经超过它起家的基因合成（SynBio $145.0M）。</b><br>
+  也就是说，<b>「合成生物学龙头」的主要收入其实来自测序配套，而非合成本身。</b>
+  这对「基因合成是这条链核心受益环节」的流行叙事是一个直接的反证——至少到目前为止，
+  <b>合成的商业体量还撑不起想象空间</b>。
+</div>
+<p><b>与 ART 的距离：1 跳（若 ART 被工程化，需要合成其序列做实验与生产）。</b>
+但注意：ART 相关实验用的是<b>标准实验室菌株表达</b>，短期不产生大规模合成需求。</p>
+
+<h3>3.5 环节五：实验室自动化 / self-driving lab</h3>
+<table>
+<thead><tr><th style="width:26%">条目</th><th style="width:38%">数值 / 事实</th><th>核实</th></tr></thead>
+<tbody>
+<tr><td>实验室自动化（GVR 口径）</td><td><b>$8.27B（2024）→ $18.39B（2033）</b>，CAGR 9.3%</td><td><span class="v v-part">⚠️</span></td></tr>
+<tr><td>实验室自动化 + 自主实验室</td><td><b>~$6.0B（2025）→ ~$20B（2035）</b>，CAGR <b>12.8%</b></td><td><span class="v v-part">⚠️ Astute</span></td></tr>
+<tr><td><b>自主性结构（关键）</b> 🔥</td>
+    <td class="bad"><b>scripted（脚本化）自动化仍占最大份额；closed-loop / autonomous 是增量而非存量</b></td>
+    <td><span class="v v-part">⚠️</span></td></tr>
+<tr><td>主要玩家</td><td>Thermo Fisher、BD、Agilent、Revvity、<b>Beckman Coulter</b>、Bio-Rad、QIAGEN、<b>Tecan</b>、Brooks、<b>Hamilton</b>、Promega、Opentrons、Gilson、Eppendorf、Hudson Robotics</td><td><span class="v v-part">⚠️</span></td></tr>
+<tr><td><b>中国·北京政策时间线</b></td>
+    <td>2026-07-01《北京市加快推进人工智能赋能科学研究实施方案（2026—2028）》<b>首次市级文件提「加快自主实验室体系建设」</b>；
+        07-24 AI 原生仪器揭榜挂帅；<b>07-31 全国首个国家标准《人工智能 自主实验室通用技术要求》立项</b>；
+        08-11 六大领域征集课题；08-21 首批 16 项 AI4S 案例中 <b>5 项</b>为自主实验室</td>
+    <td><span class="v v-true">✅ 官方一手</span></td></tr>
+<tr><td>北京生态（上游）</td>
+    <td>深势科技 <b>Uni-Lab-OS 接入 1,800+ 种仪器型号</b>、支持自然语言全流程控制；
+        青元开物液体工作站（1μL–2000μL、通量 96）；和光智成 XuanLab；北京科学智能研究院 DPA</td>
+    <td><span class="v v-true">✅ 官方站转述企业自报</span></td></tr>
+<tr><td>标杆案例</td>
+    <td>北大邓宏魁团队化学重编程干细胞智造平台：占地 <b>6 m²</b>、<b>120+ 工序无人运行</b>、效率提升 <b>≥3 倍</b>、批次一致性 &gt;95%；
+        平谷首个市场监管「黑灯」AI 实验室单日约 100 份食品样本无人检测</td>
+    <td><span class="v v-part">⚠️ 自报口径</span></td></tr>
+<tr><td><b>A-Lab（41 种新材料）/ Argonne Polybot / Emerald Cloud Lab</b></td>
+    <td class="mid"><b>成果数字本轮均无法取得官方一手页面</b>（anl.gov、HPCwire 403；Emerald 仅聚合站）；
+        A-Lab 另检索到批评性分析（Chemistry World）</td>
+    <td><span class="v v-unk">❓</span></td></tr>
+<tr><td>官方自述瓶颈</td><td>数据孤岛、模型精度不足、高端仪器成本高；合规与可复现性、成本经济性、人机分工、标准化</td><td><span class="v v-true">✅</span></td></tr>
+</tbody>
+</table>
+<div class="card risk">
+  <b>⚠️ 本环节是「叙事与现实差距」最大的地方，请特别警惕。</b><br>
+  ① <b>存量仍是脚本化</b>，闭环自主只是增量；
+  ② 海外标杆（A-Lab / Polybot / Emerald）的产出数字<b>本轮一个都没拿到官方一手来源</b>，A-Lab 还有质疑；
+  ③ <b>唯一有国家级标准动作的是中国</b>（北京 7-31 国标立项），这本身是强信号，
+     但政策立项 ≠ 产能兑现，且试点案例多为<b>企业/机构自报口径</b>。
+</div>
+<p><b>与 ART 的距离：0 跳（逻辑上）／3–5 年（实际上）。</b>
+理论上验证瓶颈最该由自动化解决，但现实是自动化还没接班。</p>
+
+<h3>3.6 环节六：基因编辑工具与疗法（下游变现）</h3>
+<table>
+<thead><tr><th style="width:24%">条目</th><th style="width:42%">数值 / 事实</th><th>核实</th></tr></thead>
+<tbody>
+<tr><td><b>Casgevy 收入</b>（全球首个获批 CRISPR 疗法）</td>
+    <td>FY2025 <b>$115.8M</b>；FY2024 $10.0M；TTM（至 2026-06-30）<b>$190.5M</b><br>
+        <b>对照：Vertex 单品 Trikafta/Kaftrio TTM $10.08B</b>——差 2 个数量级</td>
+    <td><span class="v v-part">⚠️ 建议以 10-K 二次核对</span></td></tr>
+<tr><td><b>lonvo-z（NTLA-2002，Intellia）</b> 🔥</td>
+    <td>Phase 3 HAELO 达主要 + 全部关键次要终点：6 个月发作率降 <b>87%</b>（P&lt;.0001）；<b>62%</b> 患者无发作；
+        80 例入组。<b>2026-09-08 FDA 接受 BLA + 优先审评，PDUFA 2027-03-10</b>；若获批将成<b>全球首个 in vivo CRISPR 疗法</b></td>
+    <td><span class="v v-true">✅</span></td></tr>
+<tr><td><b>Editas EDIT-401</b></td>
+    <td>上调 LDLR 降 LDL-C：临床前 LDL-C 平均降 <b>&gt;90%</b>；<b>2026 年内</b>启动首例人体试验，2027 出剂量探索 topline；<br>
+        适应症从罕见病扩向 <b>美国 &gt;7,000 万高脂血症人群</b>；Q1 2026 净亏 $25.0M，现金 $123.6M 支撑至 <b>2027Q3</b>；<br>
+        2024-12 起已终止 reni-cel 临床并裁员，全面转 in vivo</td>
+    <td><span class="v v-true">✅</span></td></tr>
+<tr><td>CRISPR 基因编辑市场</td><td>$4.01B（2024）→ $13.5B（2033），CAGR 14.7%（⚠️ GVR）<br>基因编辑全技术：$11.37B（2025）→ $39.81B（2033），CAGR 17.03%（⚠️ GVR）</td><td><span class="v v-part">⚠️</span></td></tr>
+<tr><td>Cas 核酸酶细分市场</td><td class="mid">未取得（QYResearch 有专报，摘要无数字）</td><td><span class="v v-unk">❓</span></td></tr>
+<tr><td>Beam BEAM-302 具体数值</td><td class="mid">未取得（官方发布页为 PDF）</td><td><span class="v v-unk">❓</span></td></tr>
+</tbody>
+</table>
+<div class="card purple">
+  <b>🔍 两个必须记住的事实</b><br>
+  ① <b>下游变现仍极薄弱</b>：Casgevy FY2025 只有 $115.8M。工具链上游热闹，<b>下游还是象征性的</b>。
+  ② <b>四强已彻底分化，不能用「CRISPR 板块」统一叙事</b>：
+  Intellia 监管最前（PDUFA 2027-03-10）／Editas 砍管线转单一 in vivo 资产、现金到 2027Q3／
+  Beam 走碱基编辑／CRISPR Tx 靠 Casgevy 分成。<br>
+  <b>👉 这正好解释了 9/23 那天的跌幅差异</b>：跌得最狠的 PRME（先导编辑 −11.58%）恰恰是<b>最依赖「下一代工具」故事</b>的，
+  而已有获批产品现金流的 CRSP 只跌 5.54%。<b>市场罚的是「工具故事」，不是「基因编辑」。</b>
+</div>
+<p><b>与 ART 的距离：2 跳，且方向可能是负的。</b>
+ART 与现有疗法管线<b>毫无交集</b>（功能都未知），但「AI 能持续产出新工具」这件事对<b>工具专利估值</b>是压力。</p>
+
+<h3>3.7 环节七：AI4S 平台层</h3>
+<table>
+<thead><tr><th style="width:24%">主体</th><th style="width:44%">关键事实</th><th>核实</th></tr></thead>
+<tbody>
+<tr><td><b>Anthropic 的「三件套 + 一实验室」</b> 🔥</td>
+    <td>① <b>Claude for Life Sciences</b>（2025-10-20）：Sonnet 4.5 在 Protocol QA 得 <b>0.83</b>（人类基线 0.79）；
+        接入 Benchling / BioRender / PubMed / Wiley / Synapse / 10x Genomics；
+        客户与合作方含 Sanofi、Novo Nordisk、Broad、Genmab、Schrödinger、EvolutionaryScale、FutureHouse 等。<br>
+        ② <b>Claude Science</b>（产品）③ <b>LSVP</b>（生命科学验证计划，合规准入）④ <b>自建湿实验室</b>（2026 春）<br>
+        <b>→ 从「卖模型」走向「自己产出发现」</b></td>
+    <td><span class="v v-true">✅</span></td></tr>
+<tr><td><b>FutureHouse / Edison · Kosmos</b></td>
+    <td>单次 <b>12–48 小时</b>、约 <b>$200/次</b>；平均每次运行 <b>166</b> 次数据分析 + <b>36</b> 次文献综述 agent 展开；<br>
+        独立评估准确率：数据分析类 <b>85.5%</b>、文献综述类 <b>82.1%</b>、<b>跨域解释性陈述仅 57.9%</b>；<br>
+        局限自述：仅支持 &lt;5GB 数据、不能自主访问公开库对照、图像/原始测序文件弱、多轮不保证收敛、不支持中途干预</td>
+    <td><span class="v v-part">⚠️ 多源转述 arXiv</span></td></tr>
+<tr><td>「AI 生成科研假说」赛道估值</td>
+    <td><b>Lila Sciences</b>：$350M Series A（2026-06），因 NVIDIA 新投资估值 <b>&gt;$1.3B</b>；<br>
+        <b>Periodic Labs</b>：洽谈约 <b>$70 亿</b>估值、拟募 $500M（2026-03）；<br>
+        <b>Basecamp Research</b>：<b>$140M Series C，投资方含 Anthropic + NVIDIA</b>（2026-09）</td>
+    <td><span class="v v-part">⚠️</span></td></tr>
+<tr><td>Google DeepMind 科学产品</td><td class="mid">AlphaGenome / AI co-scientist 正文均未能抓取（blog.google / HPCwire 403）</td><td><span class="v v-unk">❓</span></td></tr>
+</tbody>
+</table>
+<div class="card warn">
+  <b>⚠️ 平台层的估值与产出严重脱节</b>：Lila &gt;$1.3B（2025-10）→ Periodic 洽谈 ~$7B（2026-03），
+  <b>估值增速远超公开产出</b>。而同一赛道里最诚实的数据来自 Kosmos 自己：
+  <b>「跨域解释性陈述准确率仅 57.9%」</b>——即<b>它会自信地说错话</b>。<br>
+  <b>👉 这一点与 ART 事件的教训完全一致</b>：能力边界必须自己披露，否则会被叙事放大。
+</div>
+<div class="card hi">
+  <b>🔥 一个容易被忽略但很重要的信号</b>：<b>Anthropic 与 NVIDIA 联合投了 Basecamp Research $140M Series C</b>。<br>
+  前沿 AI 实验室正在<b>直接投资生物设计公司</b>，而不只是做工具供应商。
+  这意味着<b>「AI 公司自己下场做生物」是与「AI 卖工具给药企」并行的第二条战略路径</b>——
+  Anthropic 自建湿实验室就是这条路径的落地。对产业链的含义：<b>AI 巨头同时是需求方、供给方和潜在竞争者。</b>
+</div>
+<p><b>与 ART 的距离：0 跳。</b>ART 就是这个环节的直接产物。</p>
+
+<!-- ============ §4 判据 ============ -->
+<h2 id="s4">四、关键判据：哪些环节真正受益</h2>
+<p>把「AI 假说生成成本趋零」这一个变量放进产业链，各环节的方向性影响：</p>
+<table>
+<thead><tr><th style="width:22%">环节</th><th style="width:14%">方向</th><th>逻辑</th></tr></thead>
+<tbody>
+<tr><td><b>工具专利持有者</b><br><span class="src">现有 Cas9/Cas12 专利方</span></td>
+    <td class="bad">🔻 长期承压</td>
+    <td>若 AI 能持续廉价产出新候选工具，<b>工具层的稀缺性下降</b>、新进入者门槛降低；
+        MAD7 的许可卖点本身就是「避开高额许可费」——<b>绕开专利已经被证明可行</b>。
+        9/23 美股跌幅梯度（工具故事型跌最多）与此一致。</td></tr>
+<tr><td><b>科研试剂 / 工具酶供应商</b></td>
+    <td class="ok">🔺 受益</td>
+    <td>验证需求上升 = 试剂消耗上升。酶类 CAGR（12.05%）<b>高于</b>试剂盒整体（10.02%），
+        结构上已经在偏向酶。<b>但注意</b>：这是慢变量，且体量分化极大（限制酶仅 $193M）。</td></tr>
+<tr><td><b>湿实验产能 / CDMO</b></td>
+    <td class="ok">🔺 受益</td>
+    <td>瓶颈转移的直接承接方。Anthropic 自建实验室<b>不替代</b>外包，反而可能因验证需求上升而催生更多外包。</td></tr>
+<tr><td><b>实验室自动化 / 仪器</b></td>
+    <td class="ok">🔺 最直接，但兑现最慢</td>
+    <td>验证通量的工程解法。<b>但存量仍是脚本化自动化</b>，闭环自主是增量；标杆案例产出数字多不可核实。</td></tr>
+<tr><td><b>DNA / 基因合成</b></td>
+    <td class="mid">➖ 中性偏弱</td>
+    <td>理论上受益，但 <b>Twist 的实际收入结构显示合成业务并非主力</b>（NGS 已反超 SynBio）；
+        且 ART 类实验用标准菌株表达，短期不产生大规模合成需求。</td></tr>
+<tr><td><b>生物基础模型</b></td>
+    <td class="mid">➖ 路线未定</td>
+    <td>「专用基因组语言模型」与「通用 agent + 检索」两条路线并行竞争（斯坦福 vs Anthropic）。
+        商业化路径是<b>开源权重 → 云服务包装</b>（Evo 2 → NVIDIA BioNeMo NIM），不是 SaaS。</td></tr>
+<tr><td><b>下游基因编辑疗法</b></td>
+    <td class="mid">➖ 短期无关，长期看工具成本</td>
+    <td>与 ART 无交集（功能未知）。真实拐点在 <b>2027-03-10 的 lonvo-z PDUFA</b> 与 Editas EDIT-401 的人体数据，
+        <b>与本次事件无关</b>。</td></tr>
+<tr><td><b>AI4S 平台 / 数据服务</b></td>
+    <td class="ok">🔺 受益（但估值已高）</td>
+    <td>卖铲人中最上游。但估值与产出严重脱节（Periodic 洽谈 ~$7B vs Kosmos 自述解释性准确率 57.9%）。</td></tr>
+</tbody>
+</table>
+<div class="card hi">
+  <b>🎯 一句话判据</b>：<b>受益的是「AI 发现之后要做的事」，承压的是「AI 发现之前靠什么吃饭」。</b><br>
+  如果你的逻辑落点在「AI 发现了新东西」——那是<b>承压侧</b>；
+  落点在「新东西要被验证、要耗试剂、要上仪器、要放大生产」——那才是<b>受益侧</b>。
+</div>
+
+<!-- ============ §5 规模速查 ============ -->
+<h2 id="s5">五、市场规模速查（仅 3 组可安全引用）</h2>
+<div class="card warn">
+  ⚠️ <b>重要口径警告</b>：以下数字来自<b>不同商业研究机构</b>，<b>统计口径互不兼容</b>
+  （有的含试剂盒、有的只含酶；有的含服务、有的只含仪器）。<b>严禁相加，也严禁交叉引用。</b>
+  它们的作用只有一个：判断<b>量级</b>与<b>增速方向</b>。
+</div>
+<table>
+<thead><tr><th style="width:30%">市场</th><th style="width:38%">规模与增速</th><th>来源 / 状态</th></tr></thead>
+<tbody>
+<tr><td><b>分子生物学酶 / 试剂盒 / 试剂</b></td>
+    <td>$13.68B（2025）→ $24.26B（2031）<br>CAGR <b>10.02%</b>；酶类 CAGR 12.05%</td>
+    <td><span class="v v-part">⚠️ Mordor Intelligence 单源</span></td></tr>
+<tr><td><b>基因编辑（全技术）</b></td>
+    <td>$11.37B（2025）→ $39.81B（2033）<br>CAGR <b>17.03%</b></td>
+    <td><span class="v v-part">⚠️ Grand View Research 单源</span></td></tr>
+<tr><td><b>实验室自动化 + 自主实验室</b></td>
+    <td>~$6.0B（2025）→ ~$20B（2035）<br>CAGR <b>12.8%</b>；<b>但存量以脚本化为主</b></td>
+    <td><span class="v v-part">⚠️ Astute Analytica 单源</span></td></tr>
+<tr><td>限制性内切酶 <span class="src">（对照用）</span></td>
+    <td>$193.4M（2025）→ $407.15M（2034）</td>
+    <td><span class="v v-part">⚠️ 单源</span></td></tr>
+</tbody>
+</table>
+<p class="src">数据日期：多数为 2025 基线 / 2026 发布；年份与口径详见 §8 核验表。全部为付费报告转售页摘要，未见原始方法论。</p>
+
+<!-- ============ §6 A股 ============ -->
+<h2 id="s6">六、A 股可跟踪方向</h2>
+<div class="card risk">
+  <b>⚠️ 免责声明（请先读这一句）</b>：本节为<b>产业链环节定位的事实梳理</b>，
+  <b>不构成投资建议</b>，<b>不含</b>任何买卖建议、评级、目标价或仓位建议。
+  「相关度」列是对<b>主营业务与主题契合程度</b>的客观分类，<b>不是推荐强度</b>。
+  所有公司业务描述均以公开披露为准，<b>未核实项已明确标注</b>。
+</div>
+<div class="card warn">
+  <b>⚠️ 关于「相关度」评级的口径</b>：<b>✅核心相关</b> = 直接处在「工具酶 / DNA 合成 / 湿实验验证产能」链条上，或其产品即「酶 / 工具」本身；
+  <b>⚠️部分相关</b> = 有真实业务但与本链条仅间接衔接；<b>❌仅概念沾边</b> = 名称或标签相近、业务实质不在链条上。<br>
+  <b>这是对主营业务与主题契合程度的客观分类，不是推荐强度。</b>
+  本节全部内容基于公开披露，财务数字报告期多为 <b>2026 半年报</b>（公告集中 2026-08）。
+</div>
+
+<h3>6.1 已核实的市场反应：一次「主角错配」的炒作</h3>
+<table>
+<thead><tr><th style="width:14%">时间</th><th style="width:26%">市场</th><th>反应</th></tr></thead>
+<tbody>
+<tr><td>2026-09-23</td><td><b>美股</b>（工具股）</td>
+    <td class="bad"><b>下跌</b>：Prime Medicine −11.58%、Editas −8.00%、Beam −6.02%、CRISPR Therapeutics −5.54%、Intellia −3.00%</td></tr>
+<tr><td>2026-09-24 早盘</td><td><b>A 股</b>（AI制药概念）</td>
+    <td class="ok"><b>异动拉升</b>：贝瑞基因<b>涨停</b>，华大基因、荣泰健康、塞力医疗、义翘神州、金域医学跟涨</td></tr>
+</tbody>
+</table>
+<p class="src">来源：财联社 2026-09-24（<a href="https://www.163.com/dy/article/L7J6J1RG05198CJN.html">A 股</a> /
+<a href="https://www.163.com/dy/article/L7IT4OAG05198CJN.html">美股</a>）。</p>
+<div class="card risk">
+  <b>🔍 关键问题：A 股炒的这批股票，属于本报告七环节中的哪一个？</b>
+  <table style="margin:10px 0">
+  <thead><tr><th style="width:20%">个股</th><th style="width:30%">主营</th><th style="width:24%">对应环节</th><th>真相关度</th></tr></thead>
+  <tbody>
+  <tr><td><b>贝瑞基因</b>（涨停）</td><td>基因测序 / 分子诊断</td><td>不属于七环节（是<b>测序应用端</b>）</td><td class="bad">❌ 概念沾边</td></tr>
+  <tr><td>华大基因</td><td>基因测序 / 检测</td><td>同上</td><td class="bad">❌ 概念沾边</td></tr>
+  <tr><td>金域医学</td><td>第三方医学检验（ICL）</td><td>同上</td><td class="bad">❌ 概念沾边</td></tr>
+  <tr><td>塞力医疗</td><td>IVD 流通 / 集采服务</td><td>同上（流通环节）</td><td class="bad">❌ 概念沾边</td></tr>
+  <tr><td><b>义翘神州</b></td><td>科研试剂 / 重组蛋白</td><td><b>3.3 工具酶与试剂</b></td><td class="ok">✅ 唯一命中环节</td></tr>
+  <tr><td>荣泰健康</td><td>按摩椅（健康电器），近年布局理疗机器人</td><td>不属于七环节</td><td class="bad">❌ 与主题无关</td></tr>
+  </tbody>
+  </table>
+  <b>📌 结论：6 只里有 5 只不属于本报告拆出的任何环节；唯一命中「试剂」环节的义翘神州，恰恰是被市场当作「配角」的那只。</b><br>
+  <b>这不是产业定价，是主题情绪扩散</b>——「AI 制药」四个字触发了覆盖面最大的标签，
+  而真正对应的细分环节（工具酶 / 科研试剂）在 A 股<b>标的稀缺</b>，资金只能退而求其次买「沾边」。
+</div>
+<div class="card purple">
+  <b>💡 这个错配本身是最有价值的观察</b><br>
+  A 股「AI 制药概念」的成分股结构，反映了<b>本土产业链的真实形态</b>：
+  在测序 / 检测服务 / IVD 流通环节<b>标的多、认知度高</b>；
+  而在<b>工具酶、编辑工具、实验室自动化</b>环节<b>标的稀缺</b>。<br>
+  <b>👉 含义</b>：如果这条链真的兑现，A 股的受益结构<b>不会</b>长成现在概念指数的样子。
+  「谁在概念名单里」和「谁在真实环节里」是两件事——这本身就是跟踪的起点。
+</div>
+
+<h3>6.2 各环节国产化的真实程度（按「硬度」排序）</h3>
+<table>
+<thead><tr><th style="width:5%">#</th><th style="width:24%">环节</th><th style="width:16%">真实程度</th><th>最硬证据</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><b>分子类诊断原料酶</b><br><span class="src">工具酶中最成熟细分</span></td>
+    <td class="ok">✅ 真有基础</td>
+    <td>诺唯赞 2021 年该细分市占 <b>20.52%</b>（国产厂商第一）；已具备 <b>1,300+ 种</b>基因工程改造酶；
+        菲鹏 <b>1,400+ 种</b>工业级原料；翌圣 / 近岸 / 瀚海新酶 / 爱博泰克 / 全式金（分子生物学试剂<b>国产品牌第二</b>）/ 康为世纪构成梯队。
+        华大基因称酶、荧光探针、建库原料「已基本实现国产化及自产化」。</td></tr>
+<tr><td>2</td><td><b>CRISPR Cas 蛋白</b></td>
+    <td class="ok">✅ 真有基础<br><span class="src">GMP 级已到位</span></td>
+    <td>至少 <b>6 家</b>在售：诺唯赞（Cas9 Nuclease）、翌圣（含 <b>OpenCRISPR-1</b>、GMP 级 Cas9）、近岸（NLS-Cas9）、
+        百普赛斯（Cas 酶，GMP）、恺佧（GMP 级 Cas9 / CBE / ABE）、爱博泰克。
+        <b>但国产份额无任何公开数据</b>（❓）。</td></tr>
+<tr><td>3</td><td><b>DNA / 基因合成</b></td>
+    <td class="ok">✅ 真有基础<br><span class="src">全球级</span></td>
+    <td>金斯瑞 2026H1 生命科学事业群 <b>3.19 亿美元（+28.8%）</b>，「Gene-to-Protein」平台号称 <b>4 天</b>从数字序列到 Model-Ready 生物数据；
+        擎科生物 2026-06-30 科创板受理（2023–25 营收 <b>5.00→6.33 亿元</b>）；通用生物、生工生物、泓迅生物已规模化。</td></tr>
+<tr><td>4</td><td><b>湿实验验证服务</b><br><span class="src">承接 AI 假说</span></td>
+    <td class="ok">✅ 已有真实落地<br><span class="src">但仅一家上市主体</span></td>
+    <td><b>金斯瑞 × 礼来 AIDD 平台 Lilly TuneLab</b>：向参与企业提供蛋白表达、纯化、表征等<b>湿实验服务</b>，
+        对 <b>AI 优选的候选序列</b>做标准化可追溯验证；公司预计 <b>AI 驱动蛋白订单 2026H2 及之后保持 3 位数百分比增长</b>；
+        已配售 <b>23.3 亿港元</b>、约 70% 募资投向 AIDD 产能。</td></tr>
+<tr><td>5</td><td><b>实验室自动化 / 生命科学仪器</b></td>
+    <td class="mid">⚠️ 有基础但<br><b>主业纯度低</b></td>
+    <td>华大智造具备「移液工作站 + 自动化流水线 + LIMS」完整层级，但 2026H1 <b>智能自动化收入仅 1.16 亿元（+4.1%）、占营收约 8.5%</b>；
+        海尔生物实验室解决方案 +19%；皖仪科技实验室分析仪器 +41.68%（占主营约 10.0%）。
+        <b>真正以实验室自动化为唯一主业的两家（镁伽科技、汇像科技）都不在 A 股。</b></td></tr>
+<tr><td>6</td><td><b>限制性内切酶</b></td>
+    <td class="mid">⚠️ 刚突破<br><b>仍最薄弱</b></td>
+    <td>全球近 <b>400 种</b>限制酶被国外垄断 <b>40 余年</b>；江苏愚公 / 百时美 <b>2025 年才</b>以 119 种产品做到
+        「国内限制酶细分市占率前三」（<b>公司自述测算</b>），进入 40 余家基因合成公司供应链。</td></tr>
+<tr><td>7</td><td><b>AI4S 平台 / 自动化实验室</b></td>
+    <td class="ok">✅ 有实体资产<br><span class="src">部分已上市</span></td>
+    <td>英矽智能（<b>03696.HK</b>，2025-12-30 上市）LifeStar2 自动化实验室 + 自研 LabClaw 操作系统；
+        晶泰控股（<b>02228.HK</b>）全球 <b>超 300 台</b>自动化实验工站、机器人实验室<b>月产超 5 万条反应产率数据</b>，
+        AI4S 收入 1.94 亿元（+136.4%）、占比由 16% 升至 <b>49%</b>。</td></tr>
+</tbody>
+</table>
+
+<h3>6.3 「真有工具酶 / Cas 蛋白业务」的公司清单（A 股部分）</h3>
+<table>
+<thead><tr><th style="width:18%">公司</th><th style="width:11%">相关度</th><th style="width:38%">与「AI 发现新酶」链条的关系</th><th>关键事实（报告期）</th></tr></thead>
+<tbody>
+<tr><td><b>诺唯赞</b><br><span class="src">688105.SH</span></td>
+    <td class="ok">✅ 核心</td>
+    <td><b>产品即「酶」本身</b>；已把「序列 + 结构」蛋白质设计模型投入分子酶开发，
+        采用「分子理性设计 + 高通量突变筛选」双路线；与南京大学无锡合成生物学中心签约方向为「AI 辅助酶分子理性设计与定向进化」。</td>
+    <td>1,300+ 基因工程改造酶；Cas9 Nuclease 在售；酶制剂中试平台配 GMP 车间与 <b>10L/100L/1,000L/5,000L</b> 发酵系统。
+        2026H1 营收 <b>7.00 亿元（+15.54%）</b>、归母净利 1,096 万元（<b>扣非 -2,494 万元</b>）。</td></tr>
+<tr><td><b>百普赛斯</b><br><span class="src">301080.SZ</span></td>
+    <td class="ok">✅ 核心</td>
+    <td><b>「AI 预测—实验验证」双轮驱动</b>已落地：完成<b>耐高盐全能核酸酶</b>等工业级产品的 AI 优化改造；
+        为 AI 设计抗体提供 HEK293/CHO 高通量表达与标准化纯化服务。<br>
+        <b>公司明确表述</b>：「湿实验验证能力将从研发支撑环节升级为<b>长期、结构性基础设施</b>」「AI 制药公司普遍面临湿实验通量低、周期长、数据标准不一的瓶颈」。</td>
+    <td>80+ 款 GMP 级产品（含全能核酸酶及 Cas 酶）；2026H1 营收 <b>4.996 亿元（+28.97%）</b>、归母净利 9,836 万元（+17.36%）、<b>新签订单 +30% 以上</b>。</td></tr>
+<tr><td><b>近岸蛋白</b><br><span class="src">688137.SH</span></td>
+    <td class="ok">✅ 核心</td>
+    <td>酶及试剂（逆转录酶、DNA 聚合酶等）；NLS-Cas9 Nuclease 在售。</td>
+    <td>2025 年营收 <b>1.515 亿元（+18.78%）</b>、归母净利 <b>-7,618 万元</b>（增亏 40.00%）。</td></tr>
+<tr><td><b>康为世纪</b><br><span class="src">688426.SH</span></td>
+    <td class="ok">✅ 核心</td>
+    <td>主营明确为「<b>分子检测酶原料</b>」。</td>
+    <td>2025 年营收 <b>1.94 亿元（+53.74%）</b>、归母净利 -1.07 亿元（减亏约 5,000 万元）；研发投入占营收 <b>39.98%</b>。</td></tr>
+<tr><td><b>义翘神州</b><br><span class="src">301047.SZ</span></td>
+    <td class="mid">⚠️ 部分</td>
+    <td><b>以蛋白/抗体为核心，酶非主业</b>（营收占比未披露）。2025 年报提及「重组酶及配套试剂产品」。</td>
+    <td>2025 年营收 6.996 亿元（+14%）、归母净利 1.48 亿元（+21.17%）。<br>
+        <b>→ 这正是 A 股 9/24 炒作名单里唯一命中「试剂」环节的那只</b>（见 §6.1）。</td></tr>
+<tr><td><b>金斯瑞生物科技</b><br><span class="src">1548.HK · 港股</span></td>
+    <td class="ok">✅ 核心</td>
+    <td><b>披露口径上最直接的印证</b>：2026H1 公司把生命科学事业群 +28.8% 的增长<b>明确归因于「AI 驱动药物发现领域的结构性增长」</b>；
+        并与礼来 TuneLab 落地「AI 候选序列 → 湿实验验证」的收费服务。</td>
+    <td>2026H1 收入 <b>4.04 亿美元（+27.3%）</b>、经调整净利 6,250 万美元（+203.3%）。</td></tr>
+<tr><td><b>蔚蓝生物</b><br><span class="src">603739.SH</span></td>
+    <td class="mid">⚠️ 部分<br><span class="src">A 股中最接近者</span></td>
+    <td>A 股「<b>酶设计能力 + 发酵放大</b>」双要素最完整的一家：构建里氏木霉/毕赤酵母/黑曲霉/芽孢杆菌四大表达系统，
+        并<b>成立 AI 技术开发及应用实验室</b>（方向：酶蛋白优化改良、菌株代谢通路优化、智能发酵调控）。<br>
+        <b>但规模极小，且下游是饲料/工业酶，不是基因编辑工具。</b></td>
+    <td>2025 年酶制剂收入 <b>4.68 亿元（占营收 34.26%，毛利率 63.20%）</b>；2026H1 营收 7.10 亿元（+8.80%）。</td></tr>
+<tr><td><b>康龙化成</b><br><span class="src">300759.SZ</span></td>
+    <td class="ok">✅ 核心<br><span class="src">承接端</span></td>
+    <td><b>唯一在 2026 中报中明确写出「AI 驱动的酶与蛋白设计」的 A 股 CRO</b>；同步推进「多步化学反应无人化自动合成」、
+        Cryo-EM 自动化数据采集；2026-07 与量子计算公司逻辑比特、2026-08 与具身智能公司智平方建立合作。</td>
+    <td>2026H1 营收 <b>75.95 亿元（+17.92%）</b>、<b>新签订单同比 +超 30%</b>；全球员工 24,953 人。</td></tr>
+<tr><td><b>药明康德</b><br><span class="src">603259.SH</span></td>
+    <td class="ok">✅ 核心<br><span class="src">通用产能</span></td>
+    <td><b>唯一具备「可承接海量湿实验验证」的通用型大规模产能平台</b>。</td>
+    <td>在手订单 <b>664.3 亿元（+25.2%）</b>；2026 全年收入指引由 513–530 亿<b>上调至 585–605 亿元</b>，资本开支上调至 75–85 亿元。</td></tr>
+<tr><td><b>美迪西</b><br><span class="src">688202.SH</span></td>
+    <td class="ok">✅ 核心<br><span class="src">临床前产能</span></td>
+    <td>约 <b>2.9 万㎡ GLP 实验室</b>、800 种肿瘤药效评价模型——最贴近「承接大量湿实验验证需求」的通用临床前产能之一。</td>
+    <td>2026H1 新签订单 <b>12.33 亿元（+104.74%）</b>，境内 +148.22%。</td></tr>
+<tr><td><b>英矽智能</b><br><span class="src">03696.HK · 港股</span></td>
+    <td class="ok">✅ 核心<br><span class="src">自动化湿实验</span></td>
+    <td><b>自建全自动化实验室 + 自研实验室操作系统</b>：LifeStar2（6 大功能岛、AGV 跨岛流转）+ LabClaw（5 类协作智能体 + 28 项技能模块 + 20 个可组合实验步骤模块）。</td>
+    <td>2026H1 总收入 <b>1.063 亿美元（+287.2%）</b>，上市以来<b>首个盈利半年度</b>（经调整净利 5,123 万美元）。</td></tr>
+<tr><td><b>晶泰控股</b><br><span class="src">02228.HK · 港股</span></td>
+    <td class="ok">✅ 核心<br><span class="src">自动化规模披露最细</span></td>
+    <td>全球部署 <b>超 300 台</b>自动化实验工站；机器人实验室<b>月产超 5 万条反应产率数据 + 30 万条过程数据</b>，
+        累计沉淀超 50 万条真实实验记录，<b>其中约 80% 是公开文献稀缺的失败负样本</b>（这一点对本主题极有价值）。</td>
+    <td>2026H1 总收入 3.94 亿元（账面 -23.9%，<b>剔除授权高基数后 +73.8%</b>）；
+        <b>AI4S 智慧解决方案收入 1.94 亿元（+136.4%）、占比 16%→49%</b>；期内净亏损 2.25 亿元，研发 +66.0%；现金 86.7 亿元。</td></tr>
+</tbody>
+</table>
+<p class="src">⚠️ <b>另有 8 家「真有工具酶业务」但未上市</b>，是这条链上最纯正的一批：翌圣生物、菲鹏生物、江苏愚公/百时美、恺佧生物、爱博泰克、瀚海新酶、全式金、恩和科技 / 分子之心（AI 设计端）。
+详见底稿 <code>D:\DSH桌面端\ART产业链调研\A股可跟踪方向-中国本土产业链事实底稿.md</code>。</p>
+
+<h3>6.4 必须降级的「纯概念沾边」（本节的排雷清单）</h3>
+<table>
+<thead><tr><th style="width:22%">类型</th><th style="width:30%">涉及对象</th><th>为什么必须降级</th></tr></thead>
+<tbody>
+<tr><td><b>名称陷阱</b> 🔥</td>
+    <td>皓元医药（688131.SH）「<b>工具化合物</b>」<br>药石科技（300725.SZ）「<b>分子砌块</b>」</td>
+    <td class="bad">这些是<b>化学小分子</b>，与「工具酶」<b>仅字面相近、品类完全不同</b>。
+        皓元医药前端生命科学试剂 19.91 亿元中，「工具化合物和生化试剂」14.28 亿元——数字很大，
+        但<b>在「AI 发现新酶 → 湿实验验证」链条上不构成任何产能</b>。</td></tr>
+<tr><td><b>渠道冒充上游</b></td>
+    <td>泰坦科技（688133.SH）、优宁维（301166.SZ）</td>
+    <td class="bad">以<b>代理分销</b>为主，<b>无工具酶自研业务可核实</b>（❓未找到）。</td></tr>
+<tr><td><b>「合成生物学」实为发酵法大宗化学品</b></td>
+    <td>华恒生物、梅花生物、金丹科技、圣泉集团、嘉必优（已 ST）、鲁抗医药、溢多利、富祥药业、利民股份、播恩集团、蓝晶微生物（未上市）</td>
+    <td class="bad"><b>覆盖名单中未找到任何一家以「AI 设计的新酶 / 新工具本身作为可授权、可商品化产品」为主营的 A 股公司。</b><br>
+        典型证据：梅花生物 2025 年 <b>242.09 亿元</b>营收全部为味精/氨基酸/黄原胶大宗品；凯赛生物 2026H1 长链二元酸占营收约 90%；
+        鲁抗医药生物制造仅占营收约 <b>3.0%</b>；利民股份<b>生物合成产品尚无营收贡献披露</b>。</td></tr>
+<tr><td><b>仪器板块同名陷阱</b></td>
+    <td>天瑞仪器（300165.SZ）、聚光科技（300203.SZ）</td>
+    <td class="bad">天瑞下游为 RoHS / 贵金属 / 环境监测 / 地质材料，<b>与生命科学实验室无交集</b>；聚光主业为环境监测。</td></tr>
+<tr><td><b>「设备更新受益」叙事被夸大</b> 🔥</td>
+    <td>泛科学仪器板块</td>
+    <td class="bad"><b>发改环资〔2025〕1745 号支持领域清单未单列「科研仪器」</b>（2026 年新增项为老旧小区加装电梯、养老机构、消防救援、检验检测）。
+        科研仪器更新须经「教育 / 医疗 / 检验检测」归口申报。<br>
+        <b>反向证据</b>：禾信仪器自述「质谱仪未入选国标产品导致采购需求下降，而中央资金优先采购国标产品」——
+        2025 年营收 <b>-50.92%</b>，已被实施退市风险警示。</td></tr>
+</tbody>
+</table>
+
+<h3>6.5 三条结构性事实（本节最重要）</h3>
+<div class="card hi">
+  <h4 style="margin-top:0">① 「AI × 酶」在 A 股已有<b>真实落地</b>，但载体是「酶供应商」而不是「AI 公司」</h4>
+  <p>这是本次调研最硬的发现——它把「AI 发现新酶」从叙事变成了<b>可核查的在售商品</b>：</p>
+  <table style="margin:10px 0">
+  <thead><tr><th style="width:24%">公司</th><th>已落地的 AI × 酶事实</th></tr></thead>
+  <tbody>
+  <tr><td><b>翌圣生物</b><br><span class="src">未上市</span></td>
+      <td class="ok">在售 <b>OpenCRISPR-1</b>，官网明确标注为「<b>AI 设计高保真 Cas9 类似物</b>」——
+          这是「AI 设计的新酶已经作为商品在卖」的<b>直接实例</b></td></tr>
+  <tr><td><b>诺唯赞</b></td><td>已把「序列 + 结构」蛋白质设计模型投入分子酶开发</td></tr>
+  <tr><td><b>百普赛斯</b></td><td>用「干实验计算模拟 + 湿实验高通量筛选」完成<b>耐高盐全能核酸酶</b>的 AI 优化改造</td></tr>
+  <tr><td><b>金斯瑞</b></td><td>与礼来 TuneLab 合作，<b>向 AI 制药企业出售「AI 候选序列的湿实验验证服务」</b></td></tr>
+  </tbody>
+  </table>
+  <p><b>👉 含义</b>：Art 事件里「AI 发现新酶」这一步，在中国<b>已经有人在收钱了</b>——
+  只不过收钱的方式是<b>卖酶和卖验证服务</b>，不是「卖 AI」。
+  这与本报告 §4 的判据完全吻合：<b>受益的是「AI 发现之后要做的事」。</b></p>
+</div>
+
+<div class="card risk">
+  <h4 style="margin-top:0">② 工具酶赛道最纯正的三家公司，IPO <b>全部失败</b></h4>
+  <table style="margin:10px 0">
+  <thead><tr><th style="width:24%">公司</th><th style="width:30%">拟募资</th><th>结果</th></tr></thead>
+  <tbody>
+  <tr><td>翌圣生物</td><td>11.09 亿元（科创板）</td><td class="bad">2024-03-20 上交所<b>终止审核</b></td></tr>
+  <tr><td>全式金</td><td>10 亿元（科创板）</td><td class="bad">2023-10-16 上交所<b>终止审核</b></td></tr>
+  <tr><td>菲鹏生物</td><td>创业板过会并提交注册</td><td class="bad">2024 年<b>主动撤回、终止注册</b></td></tr>
+  </tbody>
+  </table>
+  <p><b>👉 这解释了 §6.1 那个「主角错配」的成因</b>：A 股资金炒「AI制药概念」时买测序和 IVD，
+  不是因为看好它们，而是因为<b>这条链上最纯正的标的<u>根本没上市</u>，买不到</b>。<br>
+  <b>主题的 A 股可及性结构 = 大量「沾边」+ 极少数「纯正」+ 一批只能在港股或一级市场接触的主体。</b></p>
+</div>
+
+<div class="card warn">
+  <h4 style="margin-top:0">③ 设计端与承接端在中国<b>已同时存在</b>，但没有公开的联合项目</h4>
+  <p><b>设计端</b>（AI 产出候选）：分子之心（工业酶定向进化「使菌种产率提升数倍」，<b>凯赛生物持股 17.43%</b>）、
+  百图生科（xTrimo V3 覆盖蛋白质/DNA/RNA 等模态）、深势科技（Uni-Lab-OS 实验室操作系统，<b>C 轮超 8 亿元、投后估值超 60 亿元</b>）、
+  恩和科技（SAION AI，自述已自主完成「文献阅读→质粒设计→湿实验组装」，90%+ 正确率）、达普生物（明确覆盖<b>酶定向进化</b>）。</p>
+  <p><b>承接端</b>（湿实验验证）：康龙化成、药明康德、美迪西、金斯瑞。</p>
+  <p class="bad"><b>但未检索到二者之间的任何公开联合项目。</b>
+  → <b>「假说洪水 → 湿实验瓶颈」这条二阶逻辑，在 A 股目前<u>缺少可验证的财务落点</u>。</b>
+  这既是风险，也是这条链尚未被定价的地方。</p>
+</div>
+
+<h3>6.6 ⚠️ 两个必须随本节传递的纠偏（否则会严重误判）</h3>
+<div class="card risk">
+  <h4 style="margin-top:0">纠偏一：国产化率的「口径陷阱」（最易出错处）</h4>
+  <table style="margin:10px 0">
+  <thead><tr><th style="width:30%">口径</th><th style="width:26%">数值</th><th>说明</th></tr></thead>
+  <tbody>
+  <tr><td><b>全市场</b>（生物科研试剂整体）</td>
+      <td class="bad">外资约 <b>90%</b><br>国产约 <b>10%</b></td>
+      <td>F&amp;S，<b>2021 年</b>口径。这是最常被引用的「国产化率 10%」，覆盖全部生物科研试剂（含抗体、蛋白），<b>不是纯工具酶口径</b>。</td></tr>
+  <tr><td><b>国产品牌内部</b>份额</td>
+      <td class="mid">诺唯赞 24.2%<br>翌圣 12.1%<br>义翘神州 7.1%</td>
+      <td>F&amp;S，2021 年。⚠️ <b>这是「国产品牌内部」的份额，不是全市场份额。</b>
+          诺唯赞已连续在 2025 年报与 2026 半年报中引用<b>同一组 2021 年数据</b>，未见更新。</td></tr>
+  <tr><td>最接近「工具酶」的公开份额</td>
+      <td>诺唯赞 <b>20.52%</b></td><td>分子诊断原料酶细分，列国产厂商第一（2021 年，未披露外资份额）。</td></tr>
+  </tbody>
+  </table>
+  <p><b>👉 引用规则</b>：写「诺唯赞国产第一」时必须注明<b>「国产厂商内部口径（2021）」</b>；
+  若省略口径，会把它误读成「占全市场 24.2%」——<b>这会严重高估国产化程度</b>（真实全市场份额量级是 10% 上下）。</p>
+</div>
+<div class="card warn">
+  <h4 style="margin-top:0">纠偏二：政策侧的三个常见错误引用</h4>
+  <ol>
+    <li><b>❌ 不存在</b>：《加快生物制造高质量发展的若干意见》——多轮定向检索未找到任何官方证据，
+        <b>判定为名称有误或不存在，请勿引用</b>。工信部在生物制造领域的实际发文是
+        <b>中试能力建设平台培育通知（2025）</b>与<b>生物制造标志性产品征集（2026）</b>。</li>
+    <li><b>⚠️ 「十五五」规划纲要全文<u>不含</u>「AI for Science」「人工智能驱动科学研究」「科研范式」字样</b>（已做全文检索确认）。
+        纲要<b>明确写入</b>的是「高端仪器」「高端科研仪器」「生物制造」「合成生物技术」。<br>
+        <b>→ 就文本确定性而言，2026 年纲要给生物制造与科学仪器的政策锚点，比给 AI4S 的<u>更硬</u>。</b>
+        AI4S 的硬抓手在<b>经费入口</b>（新一代人工智能国家科技重大专项下设 AI4S 领域）。</li>
+    <li><b>⚠️ 2026 年「设备更新」对科学仪器的支持是间接的</b>：发改环资〔2025〕1745 号支持领域清单
+        <b>未单列「科研仪器」</b>（见 §6.4 末行）。这一点常被市场解读夸大。</li>
+  </ol>
+  <p><b>✅ 反过来，2026 年真正确定性最高的新制度供给是</b>：
+  <b>国务院令第 818 号</b>《生物医学新技术临床研究和临床转化应用管理条例》<b>自 2026-05-01 施行</b>——
+  中国首部专门规范「作用于人体细胞、分子水平」新技术的行政法规，确立「临床研究备案制 + 转化应用审批制」双轨；
+  配套 2026-05-25 科技部《人体基因数据研究伦理指引》。<br>
+  另一条同日信号：<b>2026-09-23 工信厅消费函〔2026〕455 号</b>（生物制造标志性产品征集）
+  <b>首次单列「AI赋能型」产品类型</b>——<b>与 ART 事件同日</b>。</p>
+</div>
+
+<h3>6.7 本节小结：A 股方向的三个层次</h3>
+<table>
+<thead><tr><th style="width:18%">层次</th><th style="width:26%">环节</th><th>可验证程度</th></tr></thead>
+<tbody>
+<tr><td><b>第一层：可核查的</b><br><span class="src">已有在售商品或收费服务</span></td>
+    <td>分子类诊断原料酶、CRISPR Cas 蛋白、DNA/基因合成、湿实验验证服务</td>
+    <td class="ok">有产品、有收入、有订单。<b>「AI × 酶」已有 4 条硬证据（见 §6.5 ①）。</b></td></tr>
+<tr><td><b>第二层：有基础但纯度低</b></td>
+    <td>实验室自动化 / 生命科学仪器、限制性内切酶</td>
+    <td class="mid">方向对，但要么主业占比小（华大智造 8.5%），要么刚突破且份额为公司自述。</td></tr>
+<tr><td><b>第三层：只有叙事</b><br><span class="src">需明确降级</span></td>
+    <td>「工具化合物」「分子砌块」「合成生物学」（实为发酵法大宗品）、环境监测类仪器</td>
+    <td class="bad">名称相近但品类不同，或收入结构与主题无关。</td></tr>
+</tbody>
+</table>
+<div class="card hi">
+  <b>🎯 一句话收束本章</b>：<b>A 股在这条链上的问题不是「没有真公司」，而是「真公司大多没上市」。</b><br>
+  最纯正的三家（翌圣、全式金、菲鹏）IPO 全部折戟；实验室自动化的两家（镁伽、汇像）不在 A 股；
+  AI 设计端最实的几家（分子之心、百图生科、深势科技、恩和科技）全在一级市场。<br>
+  <b>所以概念炒作买到的必然是「沾边」，而这恰恰是产业逻辑正确、持仓错误的最典型形态。</b>
+</div>
+
+<h3>6.8 A 股调研盲区（未找到，一律未编造）</h3>
+<ul>
+  <li><b>份额类</b>：2022 年之后的工具酶 / 分子诊断原料酶市场份额（公开可得份额基本停留在 <b>2021 年</b>）；
+      <b>Cas 蛋白国内整体市场规模与国产份额</b>（完全无公开数据）；外资（Tecan / Beckman / NEB / Takara / IDT）在华份额与国产替代进度的<b>量化对照</b>。</li>
+  <li><b>产能类</b>：基因合成「<b>碱基 / 年产能</b>」这一口径在国内公司<b>基本没有公开披露</b>
+      （金斯瑞、擎科生物、通用生物、生工生物、泓迅生物五家均未检索到）；通用生物 / 生工生物 / 泓迅生物 / 汇像科技的财务数据（均未上市）。</li>
+  <li><b>状态类</b>：镁伽科技（仅确认 2025-06-25 递表）、百图生科（2026-03 保密递表）—
+      <b>截至 2026-09-25 均未见聆讯 / 挂牌确认</b>；星药科技 / 燧坤智能 / 途深智合 2026 年进展与具体融资金额。</li>
+  <li><b>证伪类</b>：<b>宇科智药</b>——多轮检索未获得任何可核实来源，<b>不采信任何未经验证的描述</b>。</li>
+  <li><b>待复核类</b>（转述失真风险）：华大智造 2026H1 全部数字来自<b>单份券商研报转述</b>，中报原文未打开；
+      晶泰控股「300+ 工站 / 月产 5 万条数据 / 80% 失败负样本」为业绩发布与管理层口径，未在交易所公告原文交叉验证。</li>
+  <li><b>概念股外延</b>：媒体口径的「AI 制药概念股」极宽（上海证券报提到 A 股 <b>73 家</b>），
+      其中多数只是「在生产研发流程中<u>使用</u> AI 工具」，<b>与「AI 生成的酶 / 蛋白本身成为可授权商品」不是同一件事</b>，本轮未逐家排雷。</li>
+  <li><b>工具限制</b>：所有年报 / 半年报 / 招股书 <b>PDF 均无法抓取</b>（web_fetch 不支持 PDF），
+      财务数字来自券商研报摘要、权威媒体转述或年报全文转录页；政府官网申报指南页存在<b>「过期即删」</b>（多个 most.gov.cn 页面 404）。</li>
+</ul>
+
+<!-- ============ §7 风险 ============ -->
+<h2 id="s7">七、风险与反证（这条逻辑可能怎么错）</h2>
+<table>
+<thead><tr><th style="width:26%">反证 / 风险</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><b>① 「假说洪水」前提未成立</b></td>
+    <td>重跑 10 轮全部错过关键阵列，唯一成功来自不可复现的越界追查。
+        <b>若 AI 无法稳定产出可验证线索，则「验证需求上升」这个二阶逻辑的源头就不存在。</b>
+        <b>这是本报告最大的风险点</b>，须置于所有推论之前。</td></tr>
+<tr><td><b>② 工具层贬值是「慢」变量</b></td>
+    <td>ART 功能未知、无 Cas 蛋白、间隔序列比典型 CRISPR 更长。
+        现有工具专利（Cas9/Cas12）在<b>可预见期内不会被替代</b>。
+        「护城河受损」是 5–10 年尺度的叙事，<b>不构成短期交易理由</b>。</td></tr>
+<tr><td><b>③ 验证环节的受益可能被巨头内部化</b></td>
+    <td>Anthropic <b>自建了实验室</b>。若前沿 AI 实验室普遍选择内部化验证能力，
+        则「湿实验外包需求上升」的逻辑会被削弱——<b>下游并不必然是外部供应商</b>。
+        （反方观点见 §3.7：21 世纪经济报道引机构认为自建实验室<b>反而催生外包</b>。两种可能都存在。）</td></tr>
+<tr><td><b>④ 市场规模数字不可靠</b></td>
+    <td>全部关键市场数字均为<b>商业研究机构单源</b>，口径互不兼容、方法论未见。
+        <b>限制酶市场仅 $193M</b> 这个事实说明：<b>「工具」这个筐里，多数细分市场的绝对体量很小</b>，
+        容易被高增速（CAGR）掩盖。</td></tr>
+<tr><td><b>⑤ self-driving lab 兑现可能长期低于预期</b></td>
+    <td>存量仍是脚本化自动化；海外标杆案例的产出数字本轮<b>无一可核实</b>；
+        A-Lab 存在批评性分析。<b>不要把政策立项（北京国标）等同于产能兑现。</b></td></tr>
+<tr><td><b>⑥ 专利与资产所有权不稳定</b></td>
+    <td>USPTO 2026-03-26 第三次维持 Broad 判定，CVC 保留上诉权；
+        Inscripta 与 Manus 2025-04 合并。<b>这条链上「资产所有权重组」是常态，不是例外。</b></td></tr>
+<tr><td><b>⑦ 叙事与定价可能长期不收敛</b></td>
+    <td>A 股概念指数成分与真实环节错配（见 §6.1）。若这种错配持续，
+        <b>「产业逻辑正确但买错东西」会成为这条链上的主要亏损方式</b>。</td></tr>
+</tbody>
+</table>
+
+<!-- ============ §8 核验表 ============ -->
+<h2 id="s8">八、数据核验状态表</h2>
+<table>
+<thead><tr><th style="width:34%">数据</th><th style="width:12%">状态</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>GenBank / WGS / JGI IMG / MGnify / EMP</td><td><span class="v v-true">✅</span></td><td>官方统计页或官方 API，可直接回溯</td></tr>
+<tr><td>Evo 2（9.3T token / 128k 基因组 / 1M 上下文 / CRISPR-Cas 设计验证）</td><td><span class="v v-true">✅</span></td><td>Arc Institute + NVIDIA 双源一致</td></tr>
+<tr><td>Twist FY2025 全部财务与产能数字</td><td><span class="v v-true">✅</span></td><td>公司官方财报（SEC 披露）</td></tr>
+<tr><td>MAD7 / Eureca-V 授权链、Manus 独立授权计划</td><td><span class="v v-true">✅</span></td><td>Manus 新闻稿 + Aldevron 官网</td></tr>
+<tr><td>USPTO 2026-03-26 裁定、Editas 许可地位与财务</td><td><span class="v v-true">✅</span></td><td>Editas 官方新闻稿</td></tr>
+<tr><td>lonvo-z Phase 3 数据与 PDUFA 2027-03-10</td><td><span class="v v-true">✅</span></td><td>Intellia / CGTlive 治疗状态追踪</td></tr>
+<tr><td>Editas EDIT-401 临床前数据与时间指引</td><td><span class="v v-true">✅</span></td><td>Editas 官方新闻稿</td></tr>
+<tr><td>北京 AI4S / 自主实验室政策时间线与案例</td><td><span class="v v-true">✅</span></td><td>北京市科委 / 中关村管委会官方站（案例为企业自报口径）</td></tr>
+<tr><td>Claude for Life Sciences / LSVP / Basecamp Research 融资</td><td><span class="v v-true">✅</span></td><td>Anthropic 官方 + 多源</td></tr>
+<tr><td>各细分市场规模与 CAGR</td><td><span class="v v-part">⚠️</span></td><td><b>全部单源</b>，商业研究机构转售页摘要，<b>口径不可加</b></td></tr>
+<tr><td>「scripted 自动化仍占最大份额」</td><td><span class="v v-part">⚠️</span></td><td>Astute Analytica 单源，未见原始方法论</td></tr>
+<tr><td>Kosmos 准确率与局限、Lila/Periodic 估值</td><td><span class="v v-part">⚠️</span></td><td>多源转述 arXiv / Bloomberg，部分含付费墙</td></tr>
+<tr><td>Casgevy 收入（$115.8M / TTM $190.5M）</td><td><span class="v v-part">⚠️</span></td><td>聚合站转 Vertex 披露，<b>建议以 10-K/10-Q 二次核对</b></td></tr>
+<tr><td>Isomorphic Labs 第二轮 $2.1B、首个 AI 药临床推迟</td><td><span class="v v-part">⚠️</span></td><td>官网未取到，仅媒体源</td></tr>
+<tr><td>北大干细胞平台 / 平谷黑灯实验室数据</td><td><span class="v v-part">⚠️</span></td><td>官方站转述，但为<b>实施方自报口径</b></td></tr>
+<tr><td>翌圣生物在售 OpenCRISPR-1（AI 设计高保真 Cas9 类似物）</td><td><span class="v v-true">✅</span></td><td>公司官网技术文标注，可直接回溯</td></tr>
+<tr><td>翌圣 / 全式金 / 菲鹏三家 IPO 终止与撤回</td><td><span class="v v-true">✅</span></td><td>交易所审核结果 + 权威媒体，多源一致</td></tr>
+<tr><td>诺唯赞份额（24.2% / 20.52% / 16.82%）</td><td><span class="v v-part">⚠️</span></td><td class="bad"><b>口径陷阱</b>：其中 24.2%/12.1%/7.1% 一组为<b>国产品牌内部份额</b>（F&amp;S，2021）；
+    全市场口径外资约 90%。公司连续两年引用同一组 <b>2021 年</b>数据，未见更新</td></tr>
+<tr><td>2026-09-23 工信厅消费函〔2026〕455 号（首次单列「AI赋能型」）</td><td><span class="v v-part">⚠️</span></td><td>miit.gov.cn 原始页未检索到，经工信部「工信微报」<b>全文转载</b>核实；与 ART 事件同日</td></tr>
+<tr><td>国务院令第 818 号（2026-05-01 施行）</td><td><span class="v v-true">✅</span></td><td>gov.cn 原文，含令号 / 审议日 / 签署日 / 施行日</td></tr>
+<tr><td>《加快生物制造高质量发展的若干意见》</td><td><span class="v v-false">❌ 不存在</span></td><td class="bad"><b>证伪项</b>：多轮定向检索未找到任何官方证据，判定为名称有误或不存在，<b>请勿引用</b></td></tr>
+<tr><td>「十五五」规划纲要含「AI for Science」等表述</td><td><span class="v v-false">❌ 不成立</span></td><td class="bad">已全文检索确认：<b>不含</b>「AI for Science」「人工智能驱动科学研究」「科研范式」；
+    明确写入的是「高端仪器」「生物制造」「合成生物技术」</td></tr>
+<tr><td>华大智造 2026H1 全部数字</td><td><span class="v v-part">⚠️</span></td><td>来自<b>单份券商研报转述</b>，中报原文未打开，建议复核</td></tr>
+<tr><td>晶泰控股自动化规模（300+ 工站 / 月产 5 万条）</td><td><span class="v v-part">⚠️</span></td><td>业绩发布与管理层口径，未在交易所公告原文交叉验证</td></tr>
+</tbody>
+</table>
+
+<h3>8.1 ❓ 调研盲区（未找到，一律未编造）</h3>
+<div class="grid g4">
+  <div class="kpi red"><div class="v">$/bp</div><div class="l">DNA 合成每碱基成本曲线</div><div class="d">最大缺口</div></div>
+  <div class="kpi red"><div class="v">市占率</div><div class="l">NEB/Thermo/Takara 分厂商份额</div><div class="d">付费报告只列名</div></div>
+  <div class="kpi red"><div class="v">产出数字</div><div class="l">A-Lab / Polybot / Emerald</div><div class="d">官方页 403 或仅聚合站</div></div>
+  <div class="kpi red"><div class="v">UniProt</div><div class="l">当前条目总数</div><div class="d">官网 JS 渲染失败</div></div>
+</div>
+<ul>
+  <li><b>市场类</b>：逆转录酶市场规模、DNA 聚合酶市场规模、Cas 核酸酶细分规模、DNA 合成基准年绝对值、GenScript 2025 收入、IDT 收入/产能</li>
+  <li><b>公司与产品类</b>：ESM3 参数与商业化、AlphaFold 3 / AlphaFold DB 官方规模、AlphaGenome 与 Google AI co-scientist 发布信息、Emerald Cloud Lab 收入</li>
+  <li><b>技术类</b>：Beam BEAM-302 具体数值、CRISPR Therapeutics FY2025 收入、Vertex Casgevy 一手季度披露页、Cas13 细分玩家</li>
+  <li><b>工具限制说明</b>：web_fetch 对 PDF 一律失败；Nature、Elsevier、anl.gov、HPCwire、Chemistry World、Fortune Business Insights 等存在 403 / Cloudflare 拦截。<b>这些缺口是工具限制，不代表来源不存在。</b></li>
+</ul>
+
+<!-- ============ §9 来源 ============ -->
+<h2 id="s9">九、主要来源</h2>
+<table>
+<thead><tr><th style="width:28%">来源</th><th style="width:12%">类型</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td><a href="https://www.anthropic.com/news/claude-discovers-novel-enzyme-system">Anthropic 官方公告（ART）</a></td><td>✅ 一手</td><td>事件锚点、BSL-1/2、湿实验全由人类完成</td></tr>
+<tr><td><a href="https://www.anthropic.com/news/claude-for-life-sciences">Anthropic：Claude for Life Sciences</a></td><td>✅ 一手</td><td>平台层三件套之一、Protocol QA 0.83、合作方清单</td></tr>
+<tr><td><a href="https://www.anthropic.com/news/life-sciences-verification-program">Anthropic：Life Sciences Verification Program</a></td><td>✅ 一手</td><td>合规准入层</td></tr>
+<tr><td><a href="https://arcinstitute.org/news/evo2">Arc Institute：Evo 2</a> / <a href="https://developer.nvidia.com/blog/understanding-the-language-of-lifes-biomolecules-across-evolution-at-a-new-scale-with-evo-2/">NVIDIA Evo 2 技术博客</a></td><td>✅ 双源</td><td>基因语言模型规模与能力</td></tr>
+<tr><td><a href="https://docs.nvidia.com/nim/bionemo/evo2/2.2.0/overview.html">NVIDIA BioNeMo NIM（Evo 2）</a></td><td>✅ 一手</td><td>生物基础模型的商业化落地路径</td></tr>
+<tr><td><a href="https://manus-site-47b7bb.webflow.io/articles/manus-launches-mad7-tm-licensing-program-to-broaden-access-to-best-in-class-crispr-tools">Manus：MAD7 独立授权计划</a> / <a href="https://www.aldevron.com/catalog-products/crispr-nucleases/eureca-v-nuclease">Aldevron：Eureca-V</a></td><td>✅ 一手</td><td><b>「新酶→商品化」可核查先例</b></td></tr>
+<tr><td><a href="https://content-archive.fast-edgar.com/20260505/AL25422CZ22252Z2222M224DD5IHZP228282/editasmedicinepressrelease.htm">Editas 官方新闻稿（2026-05-05）</a></td><td>✅ 一手</td><td>USPTO 裁定、专利许可地位、EDIT-401、财务</td></tr>
+<tr><td><a href="https://app.boardroomalpha.com/sec_feed/2025/QTR4/0001581280-25-000020/twst-20250930xex991.htm">Twist Bioscience FY2025 财报</a></td><td>✅ 一手</td><td>DNA 合成环节的收入/产能/结构</td></tr>
+<tr><td><a href="https://www.ncbi.nlm.nih.gov/genbank/statistics/">NCBI GenBank 统计</a> / <a href="https://img.jgi.doe.gov/">JGI IMG</a> / <a href="https://www.ebi.ac.uk/metagenomics/api/v1/genomes?page_size=1">MGnify API</a></td><td>✅ 一手</td><td>数据原料量级</td></tr>
+<tr><td><a href="https://www.ncsti.gov.cn/kjdt/xwjj/202609/t20260924_257187.html">北京市科委 / 中关村管委会：AI4S 与自主实验室</a></td><td>✅ 一手</td><td>中国政策时间线、生态企业、示范案例</td></tr>
+<tr><td><a href="https://www.21jingji.com/article/20260924/herald/8e42dbf04d2a88cff2786ca20ac67bbe.html">21世纪经济报道 / 智通财经</a></td><td>⚠️ 二手</td><td>美股跌幅全清单、Citi「faster is proven, better is not」、RBC 900 亿美元估算、机构观点</td></tr>
+<tr><td><a href="https://www.cgtlive.com/view/lonvo-z-advances-toward-approval-first-in-vivo-crispr-therapy-hereditary-angioedema">CGTlive：lonvo-z 治疗状态追踪</a></td><td>⚠️ 二手</td><td>Phase 3 数据与 PDUFA 日期</td></tr>
+<tr><td><a href="https://www.163.com/dy/article/L7J6J1RG05198CJN.html">财联社：AI制药概念异动（A 股）</a></td><td>⚠️ 二手</td><td>A 股反应实测</td></tr>
+<tr><td><a href="https://www.163.com/dy/article/L7J6J1RG05198CJN.html">财联社：AI制药概念异动（A 股）</a></td><td>⚠️ 二手</td><td>A 股反应实测</td></tr>
+<tr><td><a href="https://www.yeasen.com/solutiondetail/2008797261458370560">翌圣生物：OpenCRISPR-1 技术文</a></td><td>✅ 一手</td><td><b>「AI 设计的新酶已在售」的直接证据</b></td></tr>
+<tr><td><a href="https://www.gov.cn/zhengce/content/202510/content_7043790.htm">国务院令第 818 号（gov.cn）</a> · <a href="https://www.gov.cn/zhengce/content/202509/content_7042999.htm">国办发〔2025〕34 号（gov.cn）</a> · <a href="https://www.gov.cn/yaowen/liebiao/202603/content_7062633.htm">「十五五」规划纲要全文（gov.cn）</a></td>
+    <td>✅ 一手</td><td><b>政策纠偏的一手依据</b>（含证伪与全文检索结论）</td></tr>
+<tr><td><a href="https://www.miit.gov.cn/zwgk/zcwj/wjfb/tz/art/2025/art_cf8a18ad0acc4b6a9c70ed2a7cf85ff5.html">工信厅联消费函〔2025〕234 号（生物制造中试平台）</a></td><td>✅ 一手</td><td>生物制造实际政策抓手</td></tr>
+</tbody>
+</table>
+<p class="src">完整调研底稿（324 行 / 129 个表格行 / <b>172 个可点击 URL</b>，含逐公司核实状态与调研盲区）：
+<code>D:\DSH桌面端\ART产业链调研\A股可跟踪方向-中国本土产业链事实底稿.md</code></p>
+
+<footer>
+  <b>MR.牛 · AI4S 基因组挖掘 → 生物工具链 · 产业拆解</b> · 2026-09-25 · 事件锚点 2026-09-23<br>
+  配套报告：<a href="ai4s-art-factcheck.html">《AI4S 事件核查：Claude「发现 ART 酶系统」》</a>（v2） ·
+  方法论：<code>agent-research-workflow.md</code>（v1.1）<br>
+  ⚠️ 本报告为公开信息产业研究与事实梳理，<b>不构成投资建议</b>；不含买卖建议、评级或目标价。
+  §6 的「相关度」评级是对<b>主营业务与主题契合程度</b>的客观分类，<b>不是推荐强度</b>。
+  所有数据标注核实状态，未取得的一律列入 §8.1 与 §6.8 盲区，未编造任何数字或公司业务。<br>
+  ⚠️ 市场规模数字来自商业研究机构，<b>口径互不兼容，不可相加或交叉引用</b>；
+  引用国产份额时必须注明口径（<b>国产品牌内部份额 ≠ 全市场份额</b>）。<br>
+  两份调研底稿：<code>调研底稿-AI基因组挖掘与生物工具链-2026-09.md</code> ·
+  <code>ART产业链调研\A股可跟踪方向-中国本土产业链事实底稿.md</code><br>
+  📍 本机路径：<code>D:\DSH桌面端\唐史主任日报\html\AI4S生物工具链产业拆解-2026-09-25.html</code>
+</footer>
+
+</div>
+</body>
+</html>
